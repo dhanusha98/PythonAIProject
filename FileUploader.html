@@ -1,0 +1,54 @@
+<html>
+<head>
+  <title>Vulnerability Detector</title>
+</head>
+<body>
+<center><h1>VULNUERABILITY DETECTOR</h1></center>
+<form>
+<table>
+    <tr>
+        <td><p>Upload your File:  &nbsp;</p></td>
+        <td><input type="file" id="codeFile" name="codeFile"/></td> 
+    </tr>
+
+    <tr>
+        <td> <br><input type="submit" id="btnSubmit" name="btnSubmit" value="SUBMIT" onclick="importFile()" /></td>
+    </tr>
+</table>
+</form>
+
+<script>
+
+    var filecontents;
+
+    document.getElementById('codeFile').onchange = function(){
+
+        var file = this.files[0];
+
+        var reader = new FileReader();
+        reader.onload = function(progressEvent){
+      
+        filecontents=this.result;
+  };
+  reader.readAsText(file);
+};
+
+function importFile(){
+
+    document.write("<b>ENTIRE FILE CONTENTS: </b>" + "<br> <br>");
+    document.write(filecontents);
+    document.write("<br> <br>");
+    document.write("<b>FILE CONTENTS LINE BY LINE: </b>");
+
+    document.write("<br> <br>");
+    // Retrieve each Line of Content
+    var lines = filecontents.split('\n');
+
+    for(var line = 0; line < lines.length; line++){
+       document.write(lines[line] + "<br>");
+    }
+}
+
+</script>
+</body>
+</html>
