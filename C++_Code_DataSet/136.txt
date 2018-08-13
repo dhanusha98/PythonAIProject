@@ -1,0 +1,429 @@
+/*Binary search tree with all the Recursive and non Recursive 
+traversals*/
+/* By:- Aniket P. Kadu :- S.e computer :- M.E.S.C.O.E */
+
+#include<iostream.h>
+#include<conio.h>
+#include<stdlib.h>
+
+class binarynode
+{
+ public:
+   int data;
+   binarynode *left;
+   binarynode *right;
+};
+
+class binsrctree
+{
+ private:
+   binarynode *root;
+   void inorder_rec(binarynode *);
+   void inorder_non_rec(binarynode *);
+   void preorder_rec(binarynode *);
+   void preorder_non_rec(binarynode *);
+   void postorder_rec(binarynode *);
+   void postorder_non_rec(binarynode *);
+ public:
+   binsrctree()
+   {
+    root=NULL;
+   }
+   void insert(int );
+   void print_inorder_rec();
+   void print_inorder_non_rec();
+   void print_preorder_rec();
+   void print_preorder_non_rec();
+   void print_postorder_rec();
+   void print_postorder_non_rec();
+};
+
+class stack
+{
+ int top;
+ binarynode *stackel[20];
+  public:
+   stack()
+   {
+    top=-1;
+   }
+  void push(binarynode *);
+  binarynode* pop();
+  int empty()
+  {
+   if(top==-1)
+   return(1);
+
+   return(0);
+  }
+};
+
+void stack::push(binarynode *node)
+{
+ stackel[++top]=node;
+}
+
+binarynode *stack::pop()
+{
+ return(stackel[top--]);
+}
+
+class stack_int
+{
+ int top;
+ int stack_int[20];
+  public:
+   stack_int()
+   {
+    top=-1;
+   }
+  void push(int flag);
+  int pop();
+  int empty_int()
+  {
+   if(top==-1)
+   return(1);
+
+   return(0);
+  }
+};
+
+void stack_int::push(int flag)
+{
+ stack_int[++top]=flag;
+}
+
+int stack_int::pop()
+{
+ return(stack_int[top--]);
+}
+/*---------------------------------------------------------------------*/
+/* fUNCTION TO INSERT A NODE IN THE TREE */
+/*---------------------------------------------------------------------*/
+void binsrctree::insert(int val)
+{
+ binarynode *temp,*prev,*curr;
+ temp=new binarynode;
+ temp->data=val;
+ temp->left=temp->right=NULL;
+
+ if(root==NULL)
+ {
+  root=temp;
+ }
+ else
+ {
+   curr=root;
+   while(curr!=NULL)
+   {
+    prev=curr;
+    if(temp->data<curr->data)
+       curr=curr->left;
+    else
+       curr=curr->right;
+   }
+   if(temp->data<prev->data)
+      prev->left=temp;
+   else
+      prev->right=temp;
+  }
+}
+
+/* ------------------------------------------------*/
+/*INORDER RECURSIVE TRAVERSAL*/
+/*-------------------------------------------------*/
+
+void binsrctree::inorder_rec(binarynode *root)
+{
+  if(root!=NULL)
+  {
+   inorder_rec(root->left);
+   cout<<root->data<<"	";
+   inorder_rec(root->right);
+  }
+}
+
+/*--------------------------------------------------*/
+/*INORDER NON RECURSIVE TRAVERSAL*/
+/*--------------------------------------------------*/
+
+void binsrctree::inorder_non_rec(binarynode *root)
+{
+ stack stk;
+ binarynode *temp;
+ if(root!=NULL)
+ {
+  temp=root;
+  do
+  {
+   while(temp!=NULL)
+   {
+      stk.push(temp);
+      temp=temp->left;
+   }/*end while*/
+   if(!stk.empty())
+   {
+      temp=stk.pop();
+      cout<<temp->data<<"	";
+      temp=temp->right;
+   }/*end if*/
+   else
+    break;
+  }while(1); /*end do while*/
+ }/* end if */
+ else
+  cout<<"
+Empty tree";
+
+} /*end function */
+
+/*--------------------------------------------------*/
+/*PREORDER RECURSIVE TRAVERSAL */
+/*---------------------------------------------------*/
+void binsrctree::preorder_rec(binarynode *root)
+{
+ if(root!=NULL)
+ {
+   cout<<root->data<<"	";
+   preorder_rec(root->left);
+   preorder_rec(root->right);
+ }
+}
+
+/*--------------------------------------------------*/
+/*PREORDER NON RECURSIVE TRAVERSAL */
+/*---------------------------------------------------*/
+
+void binsrctree::preorder_non_rec(binarynode *root)
+{
+ stack stk;
+ binarynode *temp=root;
+
+ stk.push(temp);
+
+ while(!stk.empty())
+ {
+  temp=stk.pop();
+  if(temp!=NULL)
+  {
+   cout<<temp->data<<"	";
+   stk.push(temp->right);
+   stk.push(temp->left);
+  }
+ }
+
+}
+
+/*--------------------------------------------------*/
+/*POSTRDER RECURSIVE TRAVERSAL */
+/*---------------------------------------------------*/
+
+void binsrctree::postorder_rec(binarynode *root)
+{
+ if(root!=NULL)
+ {
+  postorder_rec(root->left);
+  postorder_rec(root->right);
+  cout<<root->data<<"	";
+ }
+}
+
+/*--------------------------------------------------*/
+/*POSTORDER NON RECURSIVE TRAVERSAL */
+/*---------------------------------------------------*/
+
+void binsrctree::postorder_non_rec(binarynode *root)
+{
+ stack stk;
+ stack_int stk1;
+ int flag;
+ binarynode *temp=root;
+
+ do
+ {
+  if(temp!=NULL)
+  {
+   stk.push(temp);
+   stk1.push(1);
+   temp=temp->left;
+  }
+  else
+  {
+   if(stk.empty())
+     break;
+   temp=stk.pop();
+   flag=stk1.pop();
+     if(flag==2)
+     {
+      cout<<temp->data;
+      temp=NULL;
+     } /*end if */
+     else
+     {
+      stk.push(temp);
+      stk1.push(2);
+      temp=temp->right;
+     } /* end else */
+  } /* end if */
+ }while(1);/*end do while*/
+}/*end function*/
+
+/*--------------------------------------------------*/
+/*FUNCTION TO PRINT INORDER RECURSIVE TRAVERSAL */
+/*---------------------------------------------------*/
+
+void binsrctree::print_inorder_rec()
+{
+ cout<<"
+";
+ inorder_rec(root);
+ cout<<"
+";
+}
+
+/*--------------------------------------------------*/
+/*FUNCTION TO PRINT INORDER NON RECURSIVE TRAVERSAL */
+/*---------------------------------------------------*/
+
+void binsrctree::print_inorder_non_rec()
+{
+ cout<<"
+";
+ inorder_non_rec(root);
+ cout<<"
+";
+}
+
+/*--------------------------------------------------*/
+/*FUNCTION TO PRINT PREORDER RECURSIVE TRAVERSAL */
+/*---------------------------------------------------*/
+
+void binsrctree::print_preorder_rec()
+{
+ cout<<"
+";
+ preorder_rec(root);
+ cout<<"
+";
+}
+
+/*--------------------------------------------------*/
+/*FUNCTION TO PRINT PREORDER NON RECURSIVE TRAVERSAL */
+/*---------------------------------------------------*/
+
+void binsrctree::print_preorder_non_rec()
+{
+ cout<<"
+";
+ preorder_non_rec(root);
+ cout<<"
+";
+}
+
+/*--------------------------------------------------*/
+/*FUNCTION TO PRINT POSTORDER RECURSIVE TRAVERSAL */
+/*---------------------------------------------------*/
+
+void binsrctree::print_postorder_rec()
+{
+ cout<<"
+";
+ postorder_rec(root);
+ cout<<"
+";
+}
+
+/*--------------------------------------------------*/
+/*FUNCTION TO PRINT POSTORDER NON RECURSIVE TRAVERSAL */
+/*---------------------------------------------------*/
+
+void binsrctree::print_postorder_non_rec()
+{
+ cout<<"
+";
+ postorder_non_rec(root);
+ cout<<"
+";
+}
+
+/*--------------------------------------------------*/
+/* MAIN FUNCTION */
+/*---------------------------------------------------*/
+
+void main()
+{
+ binsrctree BST;
+ int ch,element;
+ clrscr();
+
+ do
+ {
+  cout<<"
+1.Insert a node in binary tree";
+  cout<<"
+2.Recursive Inorder traversal";
+  cout<<"
+3.Non Recursive Inorder traversal";
+  cout<<"
+4.Recursive preorder traversal";
+  cout<<"
+5.Non recursive preorder traversal";
+  cout<<"
+6.Recursive postorder traversal";
+  cout<<"
+7.Non recursive postorder traversal";
+  cout<<"
+8.Exit";
+  cout<<"
+Enter your choice";
+  cin>>ch;
+
+  switch(ch)
+  {
+   case 1:
+    cout<<"
+Enter the element you wnat to insert";
+    cin>>element;
+    BST.insert(element);
+    break;
+   case 2:
+    cout<<"
+Recursive Inorder traversal
+";
+    BST.print_inorder_rec();
+    break;
+   case 3:
+    cout<<"
+NonRecursive Inorder traversal
+";
+    BST.print_inorder_non_rec();
+    break;
+   case 4:
+    cout<<"
+Recursive preorder traversal
+";
+    BST.print_preorder_rec();
+    break;
+   case 5:
+    cout<<"
+Non recursive preorder traversal
+";
+    BST.print_preorder_non_rec();
+    break;
+   case 6:
+    cout<<"
+Recursive postorder traversal";
+    BST.print_postorder_rec();
+    break;
+   case 7:
+    cout<<"
+Non recursive postorder traversal
+";
+    BST.print_postorder_non_rec();
+    break;
+   case 8:
+    exit(1);
+
+  }
+ }while(ch<8);
+}

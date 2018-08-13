@@ -1,0 +1,214 @@
+/*
+  Description: Programme to Print first 100 Ramanujan Numbers
+  by TWO WAYS
+  1st way is printing Ramunajan Numbers from RN
+   taking RN from 0 to INFINITY and print first 100 numbers.
+
+  2nd way is to clacualte RN numbers from L M N P of formula
+  RN= L^3 + M^3 = N^3 + P^3 and sort the RN numbers and print first
+  100 Numbers
+
+  RN=RAMANUJAN NUMBERS
+*/
+
+#include<iostream.h> //Include Header Files
+#include<math.h>
+using namespace std;
+
+template <class X>X cube(X a)//TEMPLATE to calculate CUBE of a number 
+and
+{                            //Return the CUBE
+    return (a*a*a);//Return CUBE
+}
+
+
+class Ramanujan{//CLASS to PRINT RN in two ways
+
+    public:
+           void fromRN();//PRINT RN from RN
+           void fromLMNP();//PRINT RN from LMNP values
+};
+
+
+void Ramanujan::fromLMNP()//Start of LMNP
+{
+
+int L=0,M=0,N=0,P=0;//integer L,M,N,P to calculate RN
+int a[200];//ARRAY to store RN calculated from L,M,N,P
+int temp;//Integer to SWAP for sorting.
+int i=0,j=0;//Integer's for sorting ARRAY
+int CAL;//Integer to store how many values calculated for RN
+
+cout<<"
+Calculating RN numbers from LMNP values Please 
+Wait.........
+";
+for(L=0;L<128;L++)//L
+	for(M=0;M<170;M++)//M
+		for(N=0;N<170;N++)//N
+			for(P=0;P<205;P++)//P
+				{if(L<M && M<N && N<P)//if the Condition Satisfy
+					{	//FINDING the PAIRS MATCHING RN numbers
+						 if((cube(L)+cube(M))==(cube(N)+cube(P)))
+					         { a[i]=cube(L)+cube(M);i++;}
+       						 else  if((cube(L)+cube(N))==(cube(M)+cube(P)))
+					         {a[i]=cube(L)+cube(N);i++;}
+					         else if((cube(L)+cube(P))==(cube(N)+cube(M)))
+					          {a[i]=cube(N)+cube(M);i++;}
+					  }//END of IF
+				}//END of FOR LOOP
+
+CAL=i;//CAL stores how many values calculated for RN
+i=0;
+
+
+cout<<"
+SORTING Please Wait.........
+";
+
+for (i=0; i<CAL-1; i++) //For LOOP TO SORT THE ARRAY
+{
+  for (j=0; j<CAL-1-i; j++)
+    if (a[j+1] < a[j])
+    {  // compare the two values
+      temp = a[j];         //swap a[j] and a[j+1]
+      a[j] = a[j+1];
+      a[j+1] = temp;
+    }
+}
+
+
+i=0;//i=0
+
+cout<<"
+Ramanujan Numbers are..........";
+//TO print 100 RN numbers
+do
+{
+	cout<<"
+"<<(i+1)<<"	:  "<<a[i];
+	i++;
+}while(i<100);//condition for i
+
+
+}//END of the MEMEBER fromLNMP
+
+
+void Ramanujan::fromRN()//Start of RN
+{
+   double k,l,mk,care=0,kmk=0;
+   int ri=0;//RN Nunber
+   int h,mc,m,Lo;//h is HIGEST (ie L)
+                 //mc is to calculate MINIMUM(i.e M)
+                 //MINIMUM (i.e M)
+   int i,j,flag=1;//FLAG to track the NUMBER of RN NUMBERS
+   l=(1.00/3.00);//for CUBE ROOT
+   cout<<"SLno	L	M	N	P =RN
+";
+        for(ri=0;flag<=100;ri++)//FOR loop taking RN from 0
+        { care=0;//FLAG to track number of times M occured
+          kmk=0;//FLAG to track number of NP occurance
+
+        k=(pow(ri,l));
+	for(;k>0&&care==0;k--){//LOOP to find M value
+        h=(int)k;
+        mc=((int)(ri-cube(h)));
+        mk=(pow(mc,l));
+        m=(int)mk;
+        if(m<mk)
+              m=m+1;
+        else
+          m=(int)mk;
+	if(cube(m)+cube(h)==ri)
+          {
+		care++;//to break the LOOP to find M value
+		}//END of IF
+	}//END of for LOOP to find M value
+    if((double)(cube(h)+cube(m))==ri)//IF LM found then calculate OP
+    for(i=m;i<=h;i++)//to calculate RN
+     for(j=h;j>=m;j--)
+       if((cube(i)+cube(j))==cube(m)+cube(h))//if FINDED NP also
+       {//then check the condition
+
+if(i!=j&&i!=h&&i!=m&&j!=h&&j!=m&&h!=m&&(double)(cube(h)+cube(m))==ri&&(dou
+ble)(cube(i)+cube(j))==ri)
+		{if(kmk==0){//if LMNP if found then PRINT RN
+       //printf("
+%d:	%d	%d	%d	%d	=	%d",flag,i,j,h,m,ri);
+       cout<<"
+"<<flag<<"	"<<h<<"	"<<m<<"	"<<i<<"	"<<j<<"= "<<ri;
+       flag++;//to increment the RN found flag and
+       kmk++;//TO break the LOOP to find LM
+       }//END of IF
+		}//END of IF
+	//flag++;
+       }  //END of FOR LOOP LM found
+   }    //END of FOR LOOP taking RN from
+
+
+}    //END of RN
+
+
+
+int main(){//MAIN PROOGRAMME
+    char choice;
+    Ramanujan rn;//object of Ramnujan class
+    do{
+        system("clear");//CLEAR SCREEN
+        //PRINT THE MENU
+        cout<<"##########Menu to Calculate Ramanujan
+Numbers###############################
+";
+        cout<<"1:  Calculate RN number by checking RN number and print
+first 100 Numbers
+";
+        cout<<"    (Takes more time........)
+";
+        cout<<"2:  Calculate RN fumber by claculating L, M, N,P and 
+print
+first 100 Numbers
+";
+        cout<<"3:  Quit from Menu
+";
+
+cout<<"###################################################################
+#########
+";
+        cout<<"Enter Your choice  :";
+        cin>>choice;//USER to select choice
+        if(choice=='1')//If choice 1 then print RN from RN number
+        {
+         rn.fromRN();//calling member to print RN from RN number
+         cout<<"
+Do you want to Continue(y or Y) else Any key to exit
+:";
+         cin>>choice;
+        }
+        else if(choice=='2')//If choice 2 then print RN from LNMP
+        {
+         rn.fromLMNP();//calling member to print print RN from LNMP 
+values
+         cout<<"
+Do you want to Continue(y or Y) else Any key to exit
+:";
+         cin>>choice;
+        }
+        else if(choice=='3')//to QUIT
+        {
+         cout<<"
+Bye:..............
+";
+        }
+        else//if worng choice entered
+        {
+         cout<<"
+You Entered Wrong Choice Please select correct
+";
+         cout<<"
+Do you want to Continue(y or Y) else Any key to exit
+:";
+         cin>>choice;
+        }
+    }while(choice=='y'||choice=='Y');//condition for choice
+    return 0; //return 0
+}    //End of main Programme

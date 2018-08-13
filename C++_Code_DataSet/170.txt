@@ -1,0 +1,414 @@
+#include <windows.h>
+
+//Header File--RSA Application
+//Miller & Rabin Algorithm--Test for Primality
+//PseudoRandom Number Generator Algorithm
+//Relatively Prime--Euclid's Algorithm
+
+#include<iostream.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<conio.h>
+#include<math.h>
+#include<process.h>
+
+class RSA
+{
+	public:
+		int pr1,pr2,x1,n,n1;
+		int e,d,pt;
+		int a[20],b[10];
+		int len; //binary array length
+
+		RSA();
+
+		//Miller & Rabin Algorithm--Test for Primality
+    		void testprimality();
+
+		//PseudoRandom Number Generator Algorithm
+		void pseudo1();
+		int pseudo2();
+
+		//Relatively Prime--Euclid's Algorithm
+		//GCD of two numbers-their common factor is '1'
+		void relprime();
+		int gcd(int c,int d);
+
+		//Key Generation
+		int keygenerate1(int ptext);//for Encryption
+		int keygenerate2(int ctext);//for Decryption
+		void decitobin(int x);
+
+		//Encryption
+		int encrypt(int num);
+
+		//Decryption
+		int decrypt(int ctext);
+
+
+
+};
+
+
+//Interface File--RSA Application
+//Miller & Rabin Algorithm--Test for Primality
+//PseudoRandom Number Generator Algorithm
+//Relatively Prime--Euclid's Algorithm
+
+#include"rh1.h"
+
+RSA::RSA()
+{
+	x1=1;
+	pr1=0;
+	pr2=0;
+}
+
+//Miller & Rabin Algorithm--Test for Primality
+
+void RSA::testprimality()
+{
+	int a,j,p1,q,x;
+	int t1,t2;
+
+	int k,flag,ch;
+
+	ch=1;
+	flag=0;
+	k=0;
+
+		//(n-1)=pow(2,k)*q
+	    //divide (n-1) by 2 until result is odd number
+
+		while(ch)
+		{
+			x=(n-1)/(int)(pow(2,k));
+			if(fmod(x,2)==1)
+			{
+				ch=0;
+				break;
+			}
+
+			k++;
+		}
+
+		q=(int)((n-1)/(pow(2,k)));
+
+		//to pick an integer randomly which
+		//should be less than 'n';
+		//That's why calling pseudo2()
+		a=pseudo2();
+
+		if(a>1 && a<(n-1))
+		{
+			t1=(int)(pow(a,q));
+
+			   if((t1%n)==1)
+			 	   flag=1;
+			   else
+			   {
+
+				 for(j=0;j<=(k-1);j++)
+				 {
+				   p1=((int)(pow(2,j)))*q;
+				   t2=(int)pow(a,p1);
+
+				   if((t2%n)==(n-1))
+				      flag=1;
+
+				 }
+			   }
+		}
+
+		if(flag==1)
+			if(pr1==0)
+				pr1=n;
+			else if(pr1!=0 && pr2==0)
+				pr2=n;
+
+}
+
+//PseudoRandom Number Generator Algorithm
+
+void RSA::pseudo1()
+{
+	//to select 'n' pseudorandomly and pass to testprimality();
+	//'n' is to be proved either prime or not prime
+
+	int a,c,y;
+	unsigned int m;
+
+	y=0;
+
+	a=(int)pow(7,5);   //(7,2),*(7,4),(7,5)
+	//(int)pow(7,5) used in IBM 360
+
+	//m should be assigned a "prime" no.
+	//up to pow(2,31) should be used.
+	//(2,5)-1;(2,7)-1;(2,13)-1;
+	//(2,17)-1;(2,19)-1;(2,31)-1 are primes
+
+	m=((int)pow(2,7))-1;  //(2,7)
+
+	n=1;c=0;
+
+	for(int i=0;i<50;i++)
+	{
+		n=((a*n)+c)%m;
+		testprimality();
+		//n will be computed in textprimality()
+	}
+
+//	cout<<"
+pr1 = "<<pr1;
+//	cout<<"
+pr2 = "<<pr2;
+}
+
+int RSA::pseudo2()
+{
+	//to pick an integer randomly which
+	//should be less than 'n'
+
+	int a,ret;
+	unsigned int m;
+
+	a=(int)pow(7,4); //(7,3),*(7,4) for a's (7,5)in pseudo1
+ 	m=(int)pow(2,5)-1; //(2,5)
+
+	ret=(a*x1)%m;
+	x1=ret;
+
+		return ret;
+
+}
+
+//Relatively Prime--Euclid's Algorithm
+//GCD of two numbers-their common factor is '1'
+void RSA::relprime()
+{
+
+	//Finding 'e' & 'd' value
+	int fin,ret,ret1,ret2,ch,ex,dx;
+
+	ch=1;ex=2;dx=1;
+	n1=pr1*pr2;
+
+	fin=(pr1-1)*(pr2-1);
+
+	//Finding 'e' alone
+	x1=1; //for pseudo2
+
+	while(ch)
+	{
+		ex=pseudo2();
+		if(ex>1 && ex<fin)
+		{
+			ret1=gcd(ex,fin);
+			ret2=gcd(fin,(ex%fin));
+			if(ret1==1 && ret2==1)
+			{
+				e=ex;
+				ch=0;
+				break;
+			}
+		}
+
+	}
+
+//	cout<<"
+Relative Prime : e value: "<<e;
+
+	//Finding 'd' alone
+	//de=(1 mod fin) where fin=(pr1-1)*(pr2-1);
+	ch=1;
+	while(ch)
+	{
+		ret=(e*dx)%fin;
+		if(ret==1)
+		{
+			d=dx;
+			ch=0;
+			break;
+		}
+		dx=dx+1;
+
+	}
+
+//	cout<<"
+ d value : "<<d;
+}
+
+int RSA::gcd(int c,int d)
+{
+	int r;
+
+	r=d%c;
+
+	while(r!=0)
+	{
+		d=c;
+		c=r;
+		r=d%c;
+	}
+
+	return c;
+}
+
+int RSA::keygenerate1(int ptext)
+{
+	//Encryption
+	int i,c;
+	int entext;
+
+	c=0;entext=1;
+
+	decitobin(e);  //public key with 'e'
+	//b[]->array contains binary value of 'e'
+
+	for(i=len;i>=0;i--)
+	{
+		c=2*c;
+		entext=(entext*entext)%n1;  //187->n1
+		if(a[i]==1)
+		{
+			c=c+1;
+			entext=(entext*ptext)%n1;   //187->n1
+		}
+	}
+
+//	cout<<"
+Encrypted 'c' : "<<c;
+	return entext;
+}
+
+int RSA::keygenerate2(int ctext)
+{
+
+	//Decryption
+	int i,dntext,c;
+	dntext=1;
+	c=0;
+
+	decitobin(d);  //Private Key with 'd'
+	//b[]->array contains binary value of 'd'
+
+
+	for(i=len;i>=0;i--)
+	{
+		c=2*c;
+		dntext=(dntext*dntext)%n1;
+
+		if(a[i]==1)
+		{
+			c=c+1;
+			dntext=(dntext*ctext)%n1;
+		}
+
+	}
+
+//	cout<<"
+Decrypted 'c' := "<<c;
+
+	return dntext;
+}
+
+
+void RSA::decitobin(int x)
+{
+	int k,i=0;
+
+	while(x>0)
+	{
+		a[i]=x%2;
+		i++;
+		x=x/2;
+	}
+
+	//when exit from above loop, i value is incremented by 1
+	k=i-1;
+
+	len=i-1;
+}
+
+
+int RSA::encrypt(int num)
+{
+	int ctext,i;
+
+	pt=num;
+	ctext=keygenerate1(num);
+
+	return(ctext);
+}
+
+int RSA::decrypt(int ctext)
+{
+	int dectext,i;
+
+	dectext=keygenerate2(ctext);
+
+	return(dectext);
+
+}
+
+
+
+
+//Application File--RSA Application
+//Miller & Rabin Algorithm--Test for Primality
+//PseudoRandom Number Generator Algorithm
+//Relatively Prime--Euclid's Algorithm
+
+#include"rh1.h"
+#include<stdio.h>
+
+void main()
+{
+	int i,det,det1,len,k,k1,cnt;
+	int con=0,c;
+	char ch[100],cipher[20],orig[20];
+
+	RSA r;
+	c=1;
+
+	cout<<endl<<endl;
+	for(i=0;i<70;i++)
+		cout<<'*';
+	cout<<"
+			RSA APPLICATION
+";
+	for(i=0;i<70;i++)
+		cout<<'*';
+	cout<<endl;
+
+
+	r.pseudo1();
+	r.relprime();
+
+	cout<<"
+
+Enter the String : ";
+	cnt=0;
+	char chr;
+
+	scanf ( "%[^
+]s", ch ) ;
+
+
+	len=strlen(ch);
+	k=0;k1=0;
+
+	for(i=0;i<len;i++)
+	{
+		con=(int)ch[i];
+		det=r.encrypt(con);
+		cipher[k]=char(det);
+		k++;
+		det1=r.decrypt(det);
+		orig[k1]=char(det1);
+		k1++;
+	}
+
+	cipher[k]='

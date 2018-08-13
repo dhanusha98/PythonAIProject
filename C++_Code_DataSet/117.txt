@@ -1,0 +1,2080 @@
+/***************************************************************
+*   PROGRAM DESIGNED BY ARUN KUMAR AT KANKARBAG PATNA -20  *
+*     COPY RIGHT ACT(C) 2002                               *
+*     DON'T MAKE UNNECESSARY COPY FOR DISTRIBUTION         *
+*     START DATE    : 20/3/2004 12:00 AM                   *
+*     LAST MODIFIED : 6/5/2004  03:00 PM                   *
+*   LICENCED VERSION  REVISED EDITION                      *
+****************************************************************/
+#define ESC   0x1b         /* Define the escape key   */
+#include<iomanip.h>
+#include<dos.h>
+#include<graphics.h>
+#include<conIO.h>
+#define _REGISTER_   1
+#include<stdarg.h>
+#define  bool  1
+#define check   1
+#include<time.h>
+#include<io.h>
+#include<stdlib.h>
+#include<math.h>
+#include<iostream.h>
+#include<time.h>
+#include<process.h>
+#include<string.h>
+#include<ctype.h>
+#include<conio.h>
+#include<stdio.h>
+#define TRUE    1
+union REGS i,o;
+struct regus
+{
+char namepwd[10];
+char skpwd[10];
+};
+struct  regis
+{
+char user[10];
+char key[15];
+};
+struct bill
+{
+char phone[20];
+long int amount;
+};
+struct cust
+{
+char firstname[100];
+char lastname[100];
+char cust_id[100];
+char address[100];
+char  phone[10];
+};
+struct  cust cust_rec;
+long pos;
+int flag,fla;
+char *str;
+
+char delphone[10],prnphone[10];
+char ans,choice,custo,custname[80],cho='Y';
+//int i=0;
+char pho[10];
+createuser();
+int validuser();
+void logout();
+int file_exists(char *filename);
+void printnamephone(void );
+void   secto(int endangle);
+void finalmessage1(char  string[80]);
+void del_nline(int lno);
+void StatusLine( char *msg );
+void check_graphics();
+int findduplicate(char phone[]);
+void Pause(void);
+void prj();
+void animate_circle(int x,int y);
+int wel();
+void del_nline(int lno,int nline);
+void unloading();
+void repcharup(char ch,int times,int st,int upto);
+void repchar(char ch);
+int chk_pho(char phone[10]);
+void supervisor();
+getmousepos(int *button,int *x,int *y);
+void unregistermessage(char  string[80]);
+void draw_rectangles();
+int gprintf(int *x,int *y,char *fmt,...);
+void repchar(char ch,int times);
+void statusbar(char  string[80]);
+void repchar(char ch,int times,int color);
+reg();
+int gprintf( int *xloc, int *yloc, char *fmt, ... );
+void prnfil();
+void prn();
+void prnrec();
+void messag();
+void  prnfile(void);
+int reccount();
+void welcome(void);
+void wait(void );
+void  printrec(void);
+void  draw_rectangles();
+void area();
+void draw_rectangle(float x_pos,float y_pos,float x2_pos,float  y2_pos,int
+color,int depth);
+void discustname(void);
+void  addrecord(void);
+void searchrec(void);
+void xat(int x, int y);
+void  listrecord(void);
+void  modify(void);
+ chrecdup(char ph[]);
+void grap();
+void  findrecord(void);
+void srhbyfirstnam(void);
+void srhbylastname(void);
+void  deleterecord(void);
+void sortedlist(void);
+void convert(char *ptr);
+void logfile(int x);
+void bubblesort(char *array[],int size );
+void display(char *array[],int size);
+void start();
+void  printparrec(void);
+int registeruser();
+initmouse();
+showmouseptr();
+void  printallrecord(void);
+void main(void)
+{
+clrscr();
+supervisor();
+
+}
+void start()
+{
+while(TRUE)
+{
+textcolor(WHITE);
+textbackground(1);
+clrscr();
+registeruser();
+time_t t;
+time(&t);
+cout<<"  *******   ******  *         ******    *  *  *      *       *
+*******";
+cout<<"
+   *      * ***   *        *         *       *     *   *   *   *
+***  ";
+cout<<"
+   *      ******  ********  ******    *  *  *      *       *
+*******";
+cout<<"
+";
+repchar('~',80);
+textcolor(RED);
+gotoxy(30,21);
+cprintf("TELEPHONE DIRECTORY  ");
+gotoxy(28,22);
+textbackground(GREEN);
+cprintf("DESIGNED BY: ARUN KUMAR  ");
+gotoxy(28,3);
+time(&t);
+cout<<ctime(&t);
+cout<<"
+";
+gotoxy(24,9);
+cout<<" A. ADD RECORD";
+gotoxy(24,10);
+cout<<" L. LIST RECORDS";
+gotoxy(24,11);
+cout<<" M. MODIFY RECORD ";
+gotoxy(24,12);
+cout<<" F. FIND RECORD ";
+gotoxy(24,13);
+cout<<" D. DELETE RECORD ";
+gotoxy(24,14);
+cout<<" R. REGISTER THIS SOFT WARE";
+gotoxy(24,15);
+cout<<" C. DISPLAY CUSTOMER NAME ALPHABATICALLY";
+gotoxy(24,16);
+cout<<" P. PRINT PARTICULAR RECORD";
+gotoxy(24,17);
+cout<<" E. PRINT ALL RECORD ";
+gotoxy(24,18);
+cout<<" O. PRINT OPTION";
+//gotoxy(24,19);
+//cout<<" X. EXIT";
+gotoxy(24,19);
+cout<<"
+";
+repchar('#',80,6);
+textcolor(WHITE);
+statusbar("ESC ->Back  ENTER OPTION [A,L,M,F,D,P,E,R,O,C,X] : ");
+switch((toupper(getche())))
+   {
+case 'A': addrecord();break;
+case 'L': listrecord();break;//(registeruser())==1 ?
+listrecord():wait();break;
+case 'M':modify();break;
+case 'F':searchrec();break;
+case 'D': deleterecord();break;
+case 'P': printparrec();break;
+case 'E': printallrecord();break;
+case 'R':reg();break;
+case  'O': prnrec ();break;
+case 'C': discustname();break;
+case ESC:flushall();supervisor();break;
+    }
+  }
+}
+void logout()
+{
+unloading();
+logfile(3);
+exit(0);
+}
+void wait(void )
+{clrscr();
+gotoxy(33,1);
+cprintf("HOW TO REGISTER ");
+gotoxy(33,2);
+textcolor(1);
+textbackground(2);
+cprintf("TELEPHONE DIRECTORY VERSION :#1");
+textcolor(15);
+textbackground(0);
+gotoxy(27,3);
+
+cprintf("1.FREE REGISTRATION WITH TRIAL PERIOD");
+gotoxy(27,5);
+cprintf("2.BY PAYING REGISTRATION FULL AUTHORITY");
+gotoxy(10,7);
+cprintf("SORRY ! YOU ARE NOT VALID REGISTER USER ");
+gotoxy(10,9);
+cprintf("FOR FULL ACCESSING OF THIS SOFTWARE REGISTER AS SOON AS");
+gotoxy(10,11);
+cprintf("IF YOU NOT REGISTER THEN IT AUTOMATICALLY COURRUPT");
+gotoxy(10,13);
+cprintf("FOR REGISTERING IT MAIL HERE :");
+textcolor(6+BLINK);
+cprintf("arun_kumar1131@rediffmail.com");
+textcolor(15);
+gotoxy(10,15);
+cprintf("YOU GOT A SERIAL NUMBER  AND  YOU ENTER");
+gotoxy(10,17);
+cprintf("THIS SERIAL NUMBER TO ACCESSING FULL");
+gotoxy(10,19);
+cprintf("SORRY THIS FEATURES ARE NOT AVALIABLE IN TRIAL VERSION ");
+printf( "
+
+
+
+					ARUN KUMAR");
+printf("
+			Press any Key to proceed...");
+textcolor(WHITE);
+getch();}
+void addrecord(void )
+   {
+   FILE *fp;
+   int x;
+   int flg=0;
+   char phone[10];
+   struct cust customer;
+   char nam[100];
+   char ch='Y';
+   fp=fopen("emp.dat","ab+");
+   if(fp==NULL)
+   {
+   fp=fopen("emp.dat","wb+");
+   if(fp==NULL)
+   {
+   printf("
+ cannot find file ");
+   getch();
+   }
+   }
+   fseek(fp,0,2);
+   cho='Y';
+      do
+         {
+         textbackground(1);
+         textcolor(WHITE);
+         clrscr();
+      repchar('T',80,9);
+      cout<<"
+                        ADD  NEW  RECORD        ";
+      cout<<"
+";
+      repchar('V',80,12);
+       do
+  {del_nline(11,1);
+   statusbar("Enter name of person  upto 30 characters.");
+   gotoxy(18,11);
+   cout<<"ENTER FIRST NAME         : ";
+   gets(nam);
+  }while(!isalnum(nam[0]) || strlen(nam)>30);
+  strcpy(nam,strupr(nam));
+      strcpy(customer.firstname,nam);
+       do
+  {del_nline(13,1);
+   statusbar("Enter name of person  upto 30 characters.");
+   gotoxy(18,13);
+   cout<<"ENTER LAST NAME          : ";
+   gets(nam);
+  }while(!isalnum(nam[0]) || strlen(nam)>30);
+  strcpy(nam,strupr(nam));
+ strcpy(customer.lastname,nam);
+  gotoxy(18,15);
+  cout<<"CUSTOMER ID              : "<<reccount()+1;
+  do
+  {
+  del_nline(17,1);
+   statusbar("Enter Address of person  upto 60 characters.");
+   gotoxy(18,17);
+   cout<<"ADDRESS OF THE PERSON    : ";
+    gets(nam);
+  }while(!isalnum(nam[0]) || strlen(nam)>60);
+  strcpy(nam,strupr(nam));
+   strcpy(customer.address,nam);
+ do
+ {
+  del_nline(19,1);
+  statusbar("Enter Customer Contact No. (if any) otherwise 0.");
+   gotoxy(18,19);
+   cout<<"PHONE NUMBER             : ";
+   gets(phone);
+flg=chk_pho(phone);
+}while(flg==0 || strlen(phone)>10);
+      strcpy(customer.phone,phone);
+      //Cin>>customer.phone;
+       gotoxy(16,1);
+       del_nline(17,1);
+      statusbar("SAVE THIS RECORD [ Y / N]  : ");
+          ch=getche();
+     if((ch=='Y')||(ch=='y'))
+fwrite(&customer,sizeof(customer),1,fp);
+del_nline(17,1);
+statusbar(" ADD NEW  RECORD [Y / N] : ");
+     cho=getche();
+  }while(cho=='Y'||cho=='y');
+ fclose(fp);
+ }
+int chrecdup(char ph[])
+{
+FILE *fp;
+struct cust  customer;
+fp=fopen("emp.dat","rb+");
+if(fp==NULL)
+{
+statusbar("DATA BASE DOES NOT EXIST ");
+getch();
+}
+   clrscr();rewind(fp);
+   while(fread(&customer,sizeof(customer),1,fp)==1)
+   {
+   if(strcmp(customer.phone,ph)==0)
+   {
+   statusbar("RECORD AL READY EXIST ");
+   getch();
+   return bool;
+   }
+   return 0;
+   }
+   return  0;
+   };
+void listrecord(void )
+{
+   FILE *fp;
+    int l,j;
+    char phone[10],c;
+
+
+     char *chrtemp;
+    struct cust customer;
+    fp=fopen("emp.dat","rb+");
+    if(fp==NULL)
+     { statusbar("FILE NOT FOUND/EMPTY");
+     }
+    rewind(fp);
+    while(fread(&customer,sizeof(customer),1,fp)==1)
+      {
+        l=l+1;
+       textcolor(WHITE);
+ textbackground(1);
+      clrscr();
+       repchar('=',80,6);
+   strcpy(chrtemp,strcat(strcat(strcpy(str,customer.firstname),"
+"),customer.lastname));
+   printf("
+");
+   gotoxy(24,2);
+   cout<<chrtemp;
+   cout<<"
+";
+    repchar('=',80,6);
+   gotoxy(20,9);
+   cout<<" FIRST NAME          :"<<customer.firstname;
+   gotoxy(20,11);
+   cout<<" LAST NAME           :"<<customer.lastname;
+   gotoxy(20,13);
+   cout<<" CUSTOMER ID         :"<<l;
+   gotoxy(20,15);
+   cout<<" CUSTOMER ADDRESS    :"<<customer.address;
+      gotoxy(20,17);
+   cout<<" PHONE NO            :"<<customer.phone;
+      gotoxy(20,23);
+
+   repchar('>',80,0);
+   statusbar("Press any key to view next Record....");
+   j=j+1;
+
+       c=getch();
+   if( ESC == c ){         /* Does user wish to leave?   */
+
+    start();
+    //closegraph();         /* Change to text mode      */
+  //  exit( 1 );            /* Return to OS       */
+  }         /* if( 0 == c ){
+    c = getch();
+  } */
+
+
+
+   }
+   fclose(fp);
+     }
+void  modify(void )
+   {
+   FILE *fp;
+   struct cust customer;
+char phone[10];
+int flg=0;
+char ch='Y';
+char phon[10];
+   char nam[100];
+   char str[100];
+   fp=fopen("emp.dat","rb+");
+   if(fp==NULL){
+   statusbar("DATA BASE FILE NOT FOUND ");}
+    textcolor(WHITE);
+ textbackground(1);
+   clrscr();flag=1;
+    gotoxy(24,7);
+ do
+ {
+
+ do
+ {
+  textcolor(WHITE);
+ textbackground(1);
+   clrscr();
+  del_nline(16,1);
+  statusbar("Enter Customer Contact No to Modify else  0.");
+   gotoxy(18,7);
+   cout<<"PHONE NUMBER  TO MODIFY      : ";
+   gets(phon);
+   flg=chk_pho(phon);
+ }while(flg==0 || strlen(phon)>10);
+    rewind(fp);
+    while(fread(&customer,sizeof(customer),1,fp)==1)
+    {
+   if(strcmp(customer.phone,phon)==0)
+   {
+repchar('*',80,2);
+   gotoxy(24,3);
+   strcpy(str,strcat(strcat(strcpy(str,customer.firstname),"
+"),customer.lastname));
+   cout<<"Mr./Mrs."<<str<<"Record is modifying" ;
+   cout<<"
+";
+   repchar('*',80,9);
+   gotoxy(20,9);
+       do
+  {del_nline(11,1);
+   statusbar("Enter name of person  upto 30 characters.");
+   gotoxy(18,11);
+   cout<<"ENTER FIRST NAME         : ";
+   gets(nam);
+  }while(!isalnum(nam[0]) || strlen(nam)>30);
+  strcpy(nam,strupr(nam));
+ strcpy(customer.firstname,nam);
+       do
+  {del_nline(13,1);
+   statusbar("Enter last name of person  upto 30 characters.");
+   gotoxy(18,13);
+   cout<<"ENTER LAST NAME          : ";
+   gets(nam);
+  }while(!isalnum(nam[0]) || strlen(nam)>30);
+  strcpy(nam,strupr(nam));
+ strcpy(customer.lastname,nam);
+  gotoxy(18,15);
+  cout<<"CUSTOMER ID              : "<<reccount()+1;
+  do
+  {
+  del_nline(17,1);
+   statusbar("Enter Address of person  upto 60 characters.");
+   gotoxy(18,17);
+   cout<<"ADDRESS OF THE PERSON    : ";
+   gets(nam);
+  }while(!isalnum(nam[0]) || strlen(nam)>60);
+  strcpy(nam,strupr(nam));
+   strcpy(customer.address,nam);
+ do
+ {
+  del_nline(19,1);
+  statusbar("Enter Customer Contact No. (if any) otherwise 0.");
+   gotoxy(18,19);
+   cout<<"PHONE NUMBER             : ";
+   gets(phone);
+   flg=chk_pho(phone);
+
+ }while(flg==0 || strlen(phone)>10);
+   strcpy(customer.phone,phone);
+    del_nline(17,1);
+   statusbar("SAVE THIS RECORD [ Y / N]  : ");
+     ch=getche();
+    if((ch=='Y')||(ch=='y'))
+{   pos=ftell(fp);
+   pos=pos-sizeof(customer);
+   fseek(fp,pos,0);
+fwrite(&customer,sizeof(customer),1,fp);
+}
+flag=0;
+}
+}if(flag)
+     {
+     statusbar(" Record not found  Modification canceled..");
+     getch();
+     }
+statusbar("WANT MORE RECORD TO MODIFY  ........    (Continue..[Y/N] ");
+cho=getche();
+}while(cho=='Y'||cho=='y');
+fclose(fp);
+}
+void printallrecord(void )
+{
+FILE *fp,*fs;
+   struct cust  customer;
+   char *chr;
+      // char  spc[30]={"                              "};
+   int d=1;
+   clrscr();
+   fclose(fp);
+   fp=fopen("emp.dat","rb+");
+      if(fp==NULL)
+         {
+         statusbar(" File Not Found Press Any Key ? ");
+
+         }
+   fs=fopen("prfi.txt","w");if(fs==NULL){
+   statusbar(" UNABLE TO CREATE TEMPORARY FILE ");
+   exit(0);
+   }
+   clrscr();rewind(fp);
+textbackground(6);
+gotoxy(20,3);
+cprintf("NAME OF ALL CUSTOMER IS AS FOLLOWS ");
+textbackground(BLACK);
+cout<<"
+";
+repchar('|',80,1);
+cout<<setw(30)<<setiosflags(ios::left)<<"S.NO";
+cout<<setw(8)<<setiosflags(ios::right)<<"NAME OF THE CUSTOMRES";
+cout<<"
+";
+repchar('=',80,2);
+gotoxy(1,8);
+while(fread(&customer,sizeof(customer),1,fp)==1)
+{
+strcpy(chr,strcat(strcat(strcpy(str,customer.firstname),"
+"),customer.lastname));
+cout<<setw(30)<<setiosflags(ios::left)<<d;
+cout<<setw(8)<<setiosflags(ios::right)<<chr<<endl;
+fprintf(fs,"
+************************************************
+");
+   fprintf(fs,"
+ NAME OF THE PERSON       : %s",chr);
+   fprintf(fs,"
+ FIRST NAME OF THE PERSON : %s",customer.firstname);
+   fprintf(fs,"
+ LAST  NAME OF THE PERSON : %s",customer.lastname);
+   fprintf(fs,"
+ ADDRESS OF  THE PERSON   : %s",customer.address);
+   fprintf(fs,"
+ CUSTOMER ID              : %d ",d+1);
+   fprintf(fs,"
+ PHONE NUMBER             : %s",customer.phone);
+   fprintf(fs,"
+************************************************
+");
+d=d+1;
+   }
+   statusbar("reocord os printed to temporary file prfi.txt files");
+   getch();
+   fclose(fs);
+   fclose(fp);
+     }
+void printnamephone(void )
+{
+   FILE *fp,*fs;
+   struct cust  customer;
+   char chr1[30];
+   char chr[30];
+       char  spc[30]={"                              "};
+   int d=1;
+   clrscr();
+   fclose(fp);
+   fp=fopen("emp.dat","rb+");
+      if(fp==NULL)
+         {
+         statusbar(" File Not Found Press Any Key ? ");
+         getch();
+         }
+   fs=fopen("phone.txt","wb+");if(fs==NULL){
+   statusbar(" UNABLE TO CREATE TEMPORARY FILE ");
+   getch();
+   exit(0);
+   }
+   textcolor(WHITE);
+textbackground(1);
+clrscr();rewind(fp);
+gotoxy(20,2);
+cprintf("NAME OF ALL CUSTOMER IS AS FOLLOWS ");
+cout<<"
+";
+repchar('*',80,4);
+cout<<setw(30)<<setiosflags(ios::left)<<"S.NO";
+cout<<setw(8)<<setiosflags(ios::right)<<"NAME OF THE CUSTOMRES";
+cout<<"
+";
+repchar('=',80,2);
+gotoxy(1,8);
+fprintf(fs,"S.No  First Name
+Phone No");
+fprintf(fs,"
+============================================================
+===============");
+while(fread(&customer,sizeof(customer),1,fp)==1)
+{
+strcpy(chr,strcat(strcat(strcpy(str,customer.firstname),"
+"),customer.lastname));
+cout<<setw(30)<<setiosflags(ios::left)<<d;
+cout<<setw(8)<<setiosflags(ios::right)<<chr<<endl;
+if(strlen(chr)<=30)
+{strncat(chr,spc,30-strlen(chr));
+strcpy(chr1,chr);
+}
+fprintf(fs,"
+  %d   %s%37.7s",d,chr1,customer.phone);
+   d=d+1;
+   }
+   statusbar("reocord are printed to temporary file temp.text files");
+   getch();
+   fclose(fs);
+   fclose(fp);
+     }
+
+void printparrec(void )
+{
+   FILE *fp,*fs;
+   struct cust  customer;
+   int flg=0;
+   char *chr;
+   char rec_prn[100];
+   int d=1000,i=0;
+   fclose(fp);
+   fp=fopen("emp.dat","rb+");if(fp==NULL){   statusbar(" file not found ");}
+   fs=fopen("prfi1.txt","w+");if(fs==NULL){statusbar("UNABLE TO CREATE
+TEMPORARY FILE ");}
+    textcolor(WHITE);
+ textbackground(1);
+   clrscr();flag=1;
+   gotoxy(24,7);
+   do
+ {
+ textcolor(WHITE);
+ textbackground(1);
+ del_nline(10,1);
+ statusbar("Enter Customer Contact No. (if any) otherwise 0.");
+ gotoxy(18,10);
+ cout<<"ENTER PHONE TO PRINT  INFORAMTION: ";
+ gets(rec_prn);
+ flg=chk_pho(rec_prn);
+ }while(flg==0 || strlen(rec_prn)>12);
+rewind(fp);
+   while(fread(&customer,sizeof(customer),1,fp)==1)
+   {
+   if(strcmp(customer.phone,rec_prn)==0)
+   {
+    fprintf(fs,"
+************************************************
+");
+   strcpy(chr,strcat(strcat(strcpy(str,customer.firstname),"
+"),customer.lastname));
+   fprintf(fs,"
+ NAME OF THE PERSON       : %s",chr);
+   fprintf(fs,"
+ FIRST NAME OF THE PERSON : %s",customer.firstname);
+   fprintf(fs,"
+ LAST  NAME OF THE PERSON : %s",customer.lastname);
+   fprintf(fs,"
+ ADDRESS OF  THE PERSON   : %s",customer.address);
+   fprintf(fs,"
+ CUSTOMER ID              : %d ",d);
+   fprintf(fs,"
+ PHONE NUMBER             : %s",customer.phone);
+   fprintf(fs,"
+************************************************
+");
+   flag=0;
+    d=d+1;
+    }
+     i=i+1;   }
+     if(flag)
+    {statusbar("Record Not Found ..");
+     }
+    if(!flag)
+    {
+    statusbar("record is printed to temp file prfi.txt");
+    }
+    getch();
+   fclose(fs);
+   fclose(fp);
+      }
+void  deleterecord(void )
+   {
+   FILE *fs,*fp;
+   int flag=1,flg=0;
+   struct cust customer;
+
+   fp=fopen("emp.dat","rb+");
+   fs=fopen("temp.dat","w+b");
+   textcolor(WHITE);
+   textbackground(1);
+   clrscr();
+   if(fs==NULL||fp==NULL)
+   {
+   statusbar(" UNABLE TO DELETE RECORD ");
+   }
+    do
+ {
+ textcolor(WHITE);
+ textbackground(1);
+ clrscr();
+ del_nline(1,1);
+  repchar(char(145),79);
+  del_nline(16,1);
+  repchar(' ',80);
+  statusbar("Enter Customer Contact No. (if any) otherwise 0.");
+   gotoxy(16,6);
+   cout<<"PHONE NUMBER             : ";
+   gets(delphone);
+   flg=chk_pho(delphone);
+ }while(flg==0 || strlen(delphone)>10);
+   rewind(fp);
+   while(fread(&customer,sizeof(customer),1,fp)==1)
+   {
+if(strcmp(customer.phone,delphone)==0)
+flag=0;
+else
+if(strcmp(customer.phone,delphone)!=0)
+{
+fwrite(&customer,sizeof(customer),1,fs);
+}
+}
+   fclose(fp);
+   fclose(fs);
+   remove("emp.dat");
+   rename("temp.dat","emp.dat");
+   if(flag==0)
+   {
+   statusbar("RECORD DELETED SUCCESSFULLY....");
+   getch();
+   }
+   else
+   {statusbar("RECORD NOT FOUND.......");
+   getch();
+   }
+   fcloseall();
+      }
+void findrecord(void )
+{
+   char *achr;
+   int flg=0;
+   int i=1000;
+   char pho[10];
+   FILE *fp;
+   struct cust customer;
+   fp=fopen("emp.dat","rb+");if(fp==NULL){statusbar(" record not found....
+");}
+   clrscr();flag=1;
+    do
+ {
+    textbackground(1);
+textcolor(WHITE);
+
+  clrscr();
+  statusbar("Enter Customer Contact No. (if any) otherwise 0.");
+  del_nline(16,1);
+  gotoxy(18,6);
+   cout<<"PHONE NUMBER             : ";
+   gets(pho);
+   flg=chk_pho(pho);
+ }while(flg==0 || strlen(pho)>10);
+      strcpy(customer.phone,pho);
+   rewind(fp);
+   while(fread(&customer,sizeof(customer),1,fp)==1)
+   {
+   clrscr();
+   i=i+1;
+   if(strcmp(customer.phone,pho)==0)
+   {
+textbackground(1);
+textcolor(WHITE);
+   clrscr();
+      repchar('*',80,7);
+   strcpy(achr,strcat(strcat(strcpy(str,customer.firstname),"
+"),customer.lastname));
+   gotoxy(24,3);
+   cout<<"Mr./Mrs."<<achr;
+   cout<<"
+";
+   repchar('*',80,7);
+   gotoxy(24,9);
+   cout<<"FIRST  NAME OF  CUSTOMER   : "<<customer.firstname;
+      gotoxy(24,11);
+      cout<<"LAST   NAME OF  CUSTOMER   : "<<customer.lastname;
+      gotoxy(24,13);
+      cout<<"CUSTOMER ID                : "<<i;
+      gotoxy(24,15);
+      cout<<"ADDRESS OF THE  PERSON     : "<<customer.address;
+      gotoxy(24,17);
+      cout<<"PHONE NO                   : "<<customer.phone;
+       flag=0;
+      statusbar("Press any key  to go back.....");
+       getch();
+
+       }
+    }if(flag)
+    {
+    statusbar("Record Not Found .....Press any key to go back");
+    getch();
+    }
+   fclose(fp);
+   fcloseall();
+   }
+void  discustname(void)
+{
+char *chr;
+int i=0,j=0,k=0,row=6;
+FILE *fp;
+
+struct cust  customer;
+fp=fopen("emp.dat","rb+");
+if(fp==NULL)
+{
+finalmessage1("DATA BASE DOES NOT EXIST ");
+getch();
+}
+textbackground(1);
+textcolor(WHITE);
+clrscr();
+rewind(fp);
+gotoxy(24,3);
+cout<<"NAME OF ALL CUSTOMER IS AS FOLLOWS ";
+cout<<"
+";
+repchar('|',80,1);
+gotoxy(1,4);
+cout<<setw(33)<<setiosflags(ios::left)<<"FIRST NAME";
+cout<<setw(6)<<setiosflags(ios::left)<<"LAST NAME";
+cout<<setw(33)<<setiosflags(ios::right)<<"PHONE NO";
+cout<<"
+";
+repchar('=',80,5);
+while(fread(&customer,sizeof(customer),1,fp)==1)
+{
+if(j==9)
+{
+statusbar("Press any key to continue ....");
+getch();
+j=1;
+textcolor(WHITE);
+textbackground(1);
+clrscr();
+row=6;
+gotoxy(24,2);
+cout<<"NAME OF REST CUSTOMER";
+cout<<"
+";
+gotoxy(1,5);
+cout<<setw(33)<<setiosflags(ios::left)<<"FIRST NAME";
+cout<<setw(6)<<setiosflags(ios::left)<<"LAST NAME";
+cout<<setw(33)<<setiosflags(ios::right)<<"PHONE NO";
+gotoxy(1,6);
+repchar('=',80,4);
+}
+row++;
+gotoxy(1,row);
+cout<<setw(33)<<setiosflags(ios::left)<<customer.firstname;
+cout<<setw(6)<<setiosflags(ios::left)<<customer.lastname;
+cout<<setw(35)<<setiosflags(ios::right)<<customer.phone;
+i=i+1;
+j=j+1;
+k=k+1;
+row++;
+textcolor(WHITE);
+}
+
+getch();
+fcloseall();
+fclose(fp);
+}
+void searchrec(void )
+{
+while(TRUE)
+{
+textbackground(1);
+textcolor(WHITE);
+clrscr();
+gotoxy(24,9);
+printf(" N. SEARCH BY FIRST NAME ");
+gotoxy(24,11);
+printf(" L. SEARCH BY LAST NAME ");
+gotoxy(24,13);
+printf(" H. SEARCH BY PHONE NUMBER");
+//gotoxy(24,15);
+//printf(" X. EXIT");
+statusbar(" ESC ->Back   ENTER YOUR CHOICE  : " );
+switch(toupper(getche()))
+{
+case 'N':srhbyfirstnam();break;
+case 'L':srhbylastname();break;
+case 'H':findrecord();break;
+case ESC:flushall();start();break;
+}
+}
+}
+void srhbyfirstnam(void )
+{
+char chr[100];
+char fna[100];
+int srh_no=1000;
+FILE *fp;
+struct cust customer;
+fp=fopen("emp.dat","rb+");
+if(fp==NULL)
+{
+statusbar("record not found....");
+}       textbackground(1);
+textcolor(WHITE);
+   clrscr();
+   flag=1;
+   gotoxy(18,7);
+   cprintf("ENTER FIRST NAME OF CUSTOMER : ");
+   gets(chr);
+   convert(chr);
+       strcpy(fna,chr);
+   rewind(fp);
+   while(fread(&customer,sizeof(customer),1,fp)==1)
+   {
+         textbackground(1);
+textcolor(WHITE);
+   clrscr();
+   srh_no=srh_no+1;
+   if(strcmp(customer.firstname,fna)==0)
+   {
+   repchar('*',80,7);
+   cout<<"
+";
+   strcpy(chr,strcat(strcat(strcpy(str,customer.firstname),"
+"),customer.lastname));
+   gotoxy(24,3);
+   cout<<"Mr./Mrs.  "<<chr;
+   cout<<"
+";
+   repchar('*',80,7);
+   gotoxy(20,9);
+      cout<<"FIRST  NAME OF  CUSTOMER   : "<<customer.firstname;
+      gotoxy(20,11);
+      cout<<"LAST   NAME OF  CUSTOMER   : "<<customer.lastname;
+      gotoxy(20,13);
+      cout<<"CUSTOMER ID                : "<<srh_no;
+      gotoxy(20,15);
+      cout<<"ADDRESS OF THE  PERSON     : "<<customer.address;
+      gotoxy(20,17);
+      cout<<"PHONE NO                   : "<<customer.phone;
+      gotoxy(20,19);
+      cout<<"
+";
+      repchar('*',80,0);
+          flag=0;
+       statusbar("Press any Key to continue..");
+       getch();
+
+       }
+    }if(flag)
+    {
+    statusbar("Record Not Found ..");
+    getch();
+    }
+   fclose(fp);
+   fcloseall();
+   }
+
+void srhbylastname(void )
+{
+char chr[100],lna[100];
+int cus_id=1000;
+FILE *fp;
+struct cust customer;
+fp=fopen("emp.dat","rb+");
+if(fp==NULL)
+{
+statusbar(" record not found.... ");
+}
+      textbackground(1);
+textcolor(WHITE);
+
+   clrscr();
+   flag=1;
+       gotoxy(24,7);
+       cprintf("ENTER LAST NAME OF CUSTOMER SEARCH : ");
+   gets(chr);
+   convert(chr);
+   strcpy(lna,chr);
+   rewind(fp);
+   clrscr();
+   while(fread(&customer,sizeof(customer),1,fp)==1)
+   {
+         textbackground(1);
+         textcolor(WHITE);
+         clrscr();
+   cus_id=cus_id+1;
+   if(strcmp(customer.lastname,lna)==0)
+   {
+   repchar('*',80,4);
+   strcpy(chr,strcat(strcat(strcpy(str,customer.firstname),"
+"),customer.lastname));
+          gotoxy(24,3);
+   cout<<"Mr./Mrs."<<chr;
+   cout<<"
+";
+   repchar('*',80,4);
+          gotoxy(24,7);
+      cout<<"FIRST  NAME OF  CUSTOMER   : "<<customer.firstname;
+             gotoxy(24,9);
+      cout<<"LAST   NAME OF  CUSTOMER   : "<<customer.lastname;
+             gotoxy(24,11);
+      cout<<"CUSTOMER ID                : "<<cus_id;
+             gotoxy(24,13);
+      cout<<"ADDRESS OF THE  PERSON     : "<<customer.address;
+             gotoxy(24,15);
+      cout<<"PHONE NO                   : "<<customer.phone;
+
+      cout<<"
+";
+      repchar('*',80,4);
+       flag=0;
+       statusbar("Press any Key for next record ....");
+       getch();
+
+       }
+    }if(flag)
+    {
+    statusbar("Record Not Found ....");
+    getch();
+    }
+   fclose(fp);
+   fcloseall();
+   }
+int gprintf(int *x,int *y,char *fmt,...)
+{
+va_list  ptr;
+char str[140];
+va_start(ptr,fmt);
+vsprintf(str,fmt,ptr);
+gotoxy(*x,*y);
+cprintf("%s",str);
+va_end(ptr);
+return 0;
+}
+int registeruser()
+{
+FILE *fp;
+int k,x,y,j=0,r=0;
+char stq[]= {"DESIGNED FOR TELCOME DEPARTMENT COPYRIGHT(C)-2002"};
+char stm[]={"REGISTER NOW"};
+struct regis   reg_user;
+fp=fopen("reg.sys","rb+");
+if(fp==NULL)
+{
+ textcolor(1);
+gotoxy(3,3);
+cprintf("unregistered");
+}
+rewind(fp);
+textcolor(2+BLINK);
+fread(®_user,sizeof(reg_user),1,fp);
+if(((strcmp(reg_user.key,"908765877")==0)||(strcmp(reg_user.key,"564567876
+")==0)||(strcmp(reg_user.key,"232356419")==0)||(strcmp(reg_user.key,"89779
+889")==0)||(strcmp(reg_user.key,"0190989876")==0)))
+{
+x=33;
+y=23;
+gotoxy(2,3);
+textbackground(GREEN);
+for(k=0;k<=48;k++)
+{
+textcolor(j+1);
+textattr(j);
+gprintf(&x,&y,"LIC.TO : %s",reg_user.user);
+if(j==14)
+j=1;
+j=j+1;
+}
+x=30;y=3;
+textcolor(18);
+gotoxy(30,3);
+textattr(13);
+for(k=0;k<=48;k++)
+{
+textcolor(j+1);
+textattr(j);
+cprintf("%c",stq[k]);
+if(j==14)
+j=1;
+j=j+1;
+}
+textcolor(15);
+k=1;
+}
+else
+{
+gotoxy(1,3);
+for(r=0;r<=12;r++)
+{
+textcolor(j+1);
+cprintf("%c",stm[r]);
+sound(7);
+if(j==14)
+j=1;
+j=j+1;
+}
+x=30;y=3;
+textcolor(18);
+gotoxy(30,3);
+for(k=0;k<=47;k++)
+{
+textcolor(j+1);
+cprintf("%c",stq[k]);
+sound(7);
+if(j==14)
+j=1;
+j=j+1;
+
+}
+gotoxy(14,3);
+textcolor(14+BLINK);
+cprintf("TRIAL PERIOD");
+textcolor(15);
+k=0;
+}
+nosound();
+textcolor(7);
+fclose(fp);
+return k;
+}
+reg()
+{
+FILE *fp;
+  char c[10]; int i;
+char nam[10];
+char pass[15];
+fp=fopen("reg.sys","rb+");
+if(fp==NULL)
+{
+fp=fopen("reg.sys","wb+");
+if(fp==NULL)
+{
+statusbar("CANNOT FOUND REGISTRATION FILE INFORMATION ");
+getch();
+}
+textcolor(WHITE);
+textbackground(1);
+clrscr();
+struct regis   reg_user;
+gotoxy(24,9);
+       do
+  {
+   del_nline(11);
+   statusbar("User name which is  provided to you : ");
+  gotoxy(24,11);
+   cout<<"ENTER USER ID             : ";
+   gets(nam);
+  }while(!isalpha(nam[0]) || strlen(nam)>10);
+  strcpy(nam,strupr(nam));
+  strcpy(reg_user.user,nam);
+ do
+  {
+     del_nline(13);
+   statusbar("VALID SERIAL NUMBER IF YOU HAVE  NOT REGISTER IT SOON ");
+   gotoxy(24,13);
+   cout<<"ENTER VALID KEY  PASSWORD : ";
+    gets(pass);
+  /*
+  while ((c[i] = getchar()) != '
+')
+  strcpy(pass,c);
+  gets(pass);*/
+  }while(strlen(pass)==9 || strcmp(pass,reg_user.key));
+  strcpy(pass,strupr(pass));
+  strcpy(reg_user.key,pass);
+//if(strcmp(reg_user.key,"908765977")==0)
+if(((strcmp(reg_user.key,"908765877")==0)||(strcmp(reg_user.key,"564567876
+")==0)||(strcmp(reg_user.key,"232356419")==0)||(strcmp(reg_user.key,"89779
+889")==0)||(strcmp(reg_user.key,"0190989876")==0)))
+{
+fwrite(®_user,sizeof(reg_user),1,fp);
+}
+else
+{
+statusbar("INVALID SERIAL NUMBER TRY LATTER..(continue..");
+getch();
+
+remove("reg.sys");
+}
+fclose(fp);
+}
+return 0;
+}
+
+void  discustnamesort(void)
+{
+char chr[100];
+int i=0,j=0;
+FILE *fp;
+struct cust  customer;
+fp=fopen("emp.dat","rb+");
+if(fp==NULL)
+{
+statusbar("DATA BASE DOES NOT EXIST ");
+getch();
+}
+clrscr();
+rewind(fp);
+repchar('*',80,8);
+gotoxy(24,3);
+cout<<"NAME OF ALL CUSTOMER IS AS FOLLOWS ";
+repchar('*',80,8);
+while(fread(&customer,sizeof(customer),1,fp)==1)
+{
+if(j==4)
+{
+statusbar("Press any key to continue..");
+getch();
+j=1;
+clrscr();
+}
+strcpy(chr,strcat(strcat(strcpy(str,customer.firstname),"
+"),customer.lastname));
+cout<<setw(9)<<setiosflags(ios::left)<<i+1;
+cout<<setw(17)<<setiosflags(ios::right)<<chr;
+i=i+1;
+j=j+1;
+}
+getch();
+fclose(fp);
+}
+void bubblesort(char  *array[],int size)
+{
+char *temp;
+int i,j;
+for(i=0;i<size;i++)
+for(j=0;j<size-i-1;j++)
+if(strcmp(array[j],array[j+1])<0)
+{
+temp=(char*)malloc(sizeof(array[j]));
+temp=array[j];
+array[j]=array[j+1];
+array[j+1]=temp;
+}
+}
+void display(char *array[],int k)
+{
+int u;
+for(u=0;u<k;u++)
+{
+printf("
+| %d  | 		| %s",u+1,array[u]);
+}
+}
+void convert(char *ptr)
+{
+do
+{
+if((*ptr>91)&&(*ptr<123))
+{*ptr=*ptr-32;
+ptr++;
+}
+else
+{ptr++;
+}
+}while(*ptr!=NULL);
+return;
+}
+int reccount()
+{
+FILE *fp;
+long int count=0;
+struct cust  customer;
+fp=fopen("emp.dat","rb+");
+if(fp==NULL)
+{
+statusbar("DATA BASE DOES NOT EXIST ");
+getch();
+}
+rewind(fp);
+while(fread(&customer,sizeof(customer),1,fp)==1)
+{
+count=count+1;
+}
+fclose(fp);
+return count;
+
+}
+void prnrec()
+{
+while(TRUE)
+{
+textcolor(WHITE);
+textbackground(1);
+clrscr();
+repchar('*',80,6);
+gotoxy(24,2);
+cout<<"PRINTER SETUP OPTION";
+cout<<"
+";
+repchar('*',80,6);
+gotoxy(20,9);
+cout<<" P. PRINT ALL RECORD TO PRINTER         ";
+gotoxy(20,11);
+cout<<" D. PRINT NAME AND PHONE NUMBER ONLY";
+gotoxy(20,13);
+cout<<" F. PRINT ALL  RECORD TO FILE           ";
+gotoxy(20,15);
+//cout<<" X. CANCEL\EXIT";
+statusbar("ESC->BACK     OPTION PLESE  : ");
+switch(toupper(getche()))
+{
+case 'P': prn();break;
+case 'D': printnamephone();break;
+case 'F': prnfil();break;
+//case 'X':start();break;
+case ESC:flushall();start();break;
+}
+}
+}
+void prn()
+{
+char ch[100];
+FILE *fp;
+fp=fopen("emp.dat","rb+");
+if(fp==NULL)
+{
+statusbar("file not found");
+}
+while((fread(ch,sizeof(ch),1,fp))==1)
+{
+if(stderr)
+{
+textcolor(WHITE+BLINK);
+textbackground(1);
+clrscr();
+gotoxy(18,8);
+cprintf("Check Printer is Switched On Or Not");
+gotoxy(19,9);
+cprintf("Set Properties of printer DOS PRINT ALLOWED");
+statusbar("PRINTER DEVICE ERROR OCCURED");
+getch();
+prnrec();
+
+break;
+}
+fprintf(stdprn,"%s",ch);
+}
+textbackground(WHITE);
+}
+void prnfil()
+{
+char ch[100];
+int d=0;
+char nam[80];
+struct cust customer;
+FILE *fs,*fp;
+char chr[100];
+textcolor(WHITE);
+textbackground(1);
+clrscr();
+fflush(stdin);
+
+gotoxy(24,12);
+cout<<"ENTER NAME OF FILE  FOR RECORD PRINTING  : ";
+scanf("%s",&nam);
+fp=fopen("emp.dat","rb+");
+if(fp==NULL)
+{
+statusbar("file not found");
+}
+fs=fopen(nam,"w");
+if(fs==NULL)
+{
+statusbar("file not found press any key  exit ");
+
+getch();
+}
+while((fread(&customer,sizeof(customer),1,fp))==1)
+{
+    fprintf(fs,"
+************************************************
+");
+   strcpy(chr,strcat(strcat(strcpy(str,customer.firstname),"
+"),customer.lastname));
+   fprintf(fs,"
+ NAME OF THE PERSON       : %s",chr);
+   fprintf(fs,"
+ FIRST NAME OF THE PERSON : %s",customer.firstname);
+   fprintf(fs,"
+ LAST  NAME OF THE PERSON : %s",customer.lastname);
+   fprintf(fs,"
+ ADDRESS OF  THE PERSON   : %s",customer.address);
+   fprintf(fs,"
+ CUSTOMER ID              : %d ",d);
+   fprintf(fs,"
+ PHONE NUMBER             : %s",customer.phone);
+   fprintf(fs,"
+************************************************
+");
+d=d+1;
+}}
+void repchar(char ch)
+{
+cprintf("%c",ch);
+}
+void repchar(char ch,int times)
+{
+ for(int c=0;c<times;c++)
+    cprintf("%c",ch);
+}
+void repcharup(char ch,int times,int st,int upto)
+{
+for(int c=0;c<=times;c++)
+{
+delay(10);
+gotoxy(st,upto);
+cprintf("%c",ch);
+}
+}
+void repcharup(char ch,int times)
+{
+for(int c=0;c<=times;c++)
+{
+gotoxy(1,c);
+cprintf("%c",ch);
+}
+}
+
+void repchar(char ch,int times,int color)
+{
+ textcolor(color);
+ for(int c=0;c<times;c++)
+    cprintf("%c",ch);
+}
+
+int check_money(char money[10])
+{ int flg=0;
+  int pos;
+  char *ptr;
+  int len=strlen(money);
+  ptr=strchr(money,'.');
+  if(ptr)
+  { pos=ptr-money;
+    if(pos>0 && pos<len-1)
+    { for(int c=0;c<pos;c++)
+    { if(isdigit(money[c]))
+      flg=1;
+      else
+       {  flg=0;
+        break;
+      }
+    }
+    if(flg)
+    { for(int c=pos+1;c<len;c++)
+      { if(isdigit(money[c]))
+        flg=1;
+      else
+      { flg=0;
+        break;
+      }
+      }
+    }
+    }
+    else
+   flg=0;
+  }
+  else
+  { for(int c=0;c<len;c++)
+    { if(isdigit(money[c]))
+      flg=1;
+    else
+    { flg=0;
+      break;
+    }
+    }
+  }
+
+  return flg;
+}
+int chk_pho(char phone[10])
+{ int flg=0;
+  int len=strlen(phone);
+  for(int d=0;d<len;d++)
+  { if(isdigit(phone[d]))
+    flg=1;
+    else
+    { flg=0;
+    break;
+    }
+  }
+  return flg;
+}
+void statusbar(char  string[80])
+{
+    gotoxy(1,24);
+  textbackground(7);
+  repchar('*',80);
+  repchar(' ',0);
+  gotoxy(1,25);
+  delline();
+ int l=strlen(string);
+  gotoxy((80-l)/2,25);
+textcolor(BLACK);
+  for(int i=0;i<l;i++)
+  { cprintf("%c",string[i]);
+  }
+    textbackground(YELLOW);
+  textcolor(RED);
+}
+void finalmessage()
+{
+  gotoxy(1,30);
+  cprintf("Wait For Unloading ...
+");
+  gotoxy(1,12);
+   textbackground(7);
+  repchar(' ',0);
+  gotoxy(1,12);
+  delline();
+
+//    int l=strlen(string);
+gotoxy(1,6);
+textcolor(BLACK);
+  for(int i=0;i<80;i++)
+  { cprintf(" ");
+   delay(15);
+  }
+  textbackground(9);
+  gotoxy(1,1);
+  cprintf("Unloading Completed");
+    textbackground(BLACK);
+  textcolor(8);
+}
+void finalmessage1(char  string[80])
+{
+  gotoxy(1,30);
+  gotoxy(1,12);
+   textbackground(7);
+  repchar(' ',0);
+  gotoxy(1,12);
+  delline();
+    int l=strlen(string);
+gotoxy(1,6);
+textcolor(BLACK);
+  for(int i=0;i<80;i++)
+  { cprintf("%c",string[l]);
+   delay(15);
+  }
+  textbackground(9);
+  gotoxy(1,1);
+    textbackground(1);
+  textcolor(WHITE);
+}
+
+void del_nline(int lno)
+{ for(int i=0;i<=80;i++)
+  {
+textbackground(1);
+textcolor(WHITE);
+ gotoxy(i,lno);
+ repchar(' ');
+  }
+}
+
+void del_nline(int lno,int nline)
+{ for(int i=0;i<nline;i++)
+  { gotoxy(1,lno);
+    repchar(' ');
+    lno++;
+  }
+}
+
+void unregistermessage(char  string[80])
+{
+  gotoxy(1,4);
+  textcolor(YELLOW);
+  repchar('*',80);
+  repchar(' ',0);
+  gotoxy(1,5);
+  delline();
+  cprintf("YOU MUST REGISTER PLEASE (MCA FIRST YEAR) ");
+  cprintf("GOT SERIAL NUMBER AT arun_kumar1131@rediffmail.com");
+  int l=strlen(string);
+  gotoxy((80-l)/2,25);
+  textcolor(CYAN);
+  for(int i=0;i<l;i++)
+  { cprintf("%c",string[i]);
+ }
+  textcolor(WHITE);
+}
+void logfile(int x)
+{
+int y;
+char doe[10];
+char time[10];
+clrscr();
+FILE *fp;
+fp=fopen("lo.txt","a+");
+if(fp==NULL)
+{
+cout<<"error in creating a file  ";
+}
+strcpy(doe,__DATE__);
+strcpy(time,__TIME__);
+if(x==0)
+fprintf(fp,"
+RECORD IS ADDED TIME    %s ON THE DATE OF     :%s"
+,time,doe);
+if(x==1)
+fprintf(fp,"
+RECORD IS MODIFIED TIME %s ON THE DATE OF     :%s"
+,time,doe);
+if(x==2)
+fprintf(fp,"RECORD IS LISTED TIME     %s ON THE DATE OF     :%s"
+,time,doe);
+if(x==3)
+fprintf(fp,"
+EXIT FROM SOFTWARE      %s ON THE DATE OF     :%s"
+,time,doe);
+fclose(fp);
+}
+void animate_circle(int x,int y)
+{ int d;
+  for(d=5;d<=25;d+=5)
+  {  setcolor(3);
+    circle(x,y,d);
+   }
+  for(d=5;d<=25;d+=5)
+  { setcolor(15);
+    circle(x,y,d);
+    setcolor(d);
+   circle(x,y,d);
+  }
+}
+void prj()
+{
+   int w;
+   int midx, midy;
+   int  endangle = 180;
+   void animate_circle(int x,int y);
+   midx = getmaxx();
+   midy = getmaxy();
+   cleardevice();
+   setbkcolor(8);
+   setfillstyle(SOLID_FILL,RED);
+   setcolor(RED);
+   setcolor(BLUE);
+   settextstyle(7,HORIZ_DIR,2);
+   setcolor(RED);
+  for(endangle=0;endangle<=480;endangle+=2)
+   {
+   rectangle(midx,midy,0,endangle);
+   }
+   w=0;
+     while(1)
+   { if(w>2)
+     break;
+   else
+    animate_circle(30,4);
+   w++;
+   }
+getch();
+}
+int wel()
+{
+ int midx, midy;
+   int  endangle = 180;
+int gd = DETECT, gm, er;
+   initgraph(&gd, &gm, "\bgi");
+   er= graphresult();
+   if (er != grOk)
+   {
+   return(1);
+
+   }
+{
+midx=getmaxx();
+midy=getmaxy();
+cleardevice();
+    setbkcolor(7);
+  setcolor(BLUE);
+     setcolor(YELLOW);
+  for(endangle=0;endangle<=480;endangle+=12)
+   {
+   secto(endangle);
+   rectangle(midx,midy,0,endangle);
+   rectangle(endangle,midy,midx,0);
+   }
+    setcolor(1);
+    settextstyle(7,HORIZ_DIR,3);
+   outtextxy(40,20,"Welcome to the  Phone System");
+  settextstyle(7,1,1);
+    outtextxy(610,80,"PERSONAL PHONE DICTIONARY SYSTEM PROJECT");
+ settextstyle(2,HORIZ_DIR,5);
+  outtextxy(40,140,"This project keeps the record of ");
+  outtextxy(40,165,"      a> NAME OF  PERSON,ADDRESS,PHONE NO ");
+  outtextxy(40,185,"      b> MODIFICATION , SEARCHING AND");
+  outtextxy(40,200,"           DELETION  ADITION IS POSSIBLE");
+  outtextxy(40,225,"      c> KEEP  EVERY TIME PERFORMED TASK LOGBOOK");
+  outtextxy(40,245,"             PRINT RECORD IS POSS...");
+  settextstyle(7,HORIZ_DIR,3);
+  outtextxy(80,420,"Press any key to Continue...");
+  getch();
+}
+return 0;
+}
+void check_graphics()
+{ int gd = DETECT, gm, er;
+   initgraph(&gd, &gm, "\bgi");
+   er= graphresult();
+   if (er != grOk)
+   {
+    cout<<"Graphics Error: 
+"<< grapherrormsg(er);
+    cout<<"Press any key to halt: ";
+    getch();
+    exit(1);
+   }
+}
+void   secto(int endangle)
+   {
+int x,y,d=0;
+int move=0;
+setcolor(GREEN);
+  settextstyle(7,1,1);
+sector(getmaxx()/2, getmaxy()/2+100,0,endangle, 120, 20);
+x=340,y=400;
+gprintf( &x, &y, "%d % ", d );
+d=d+7;
+while(move!=640)
+{
+if(move==620)
+{
+settextstyle(2,0,0);
+}
+{
+ setcolor(RED);
+rectangle(20,400,move,420);
+move=move+1;
+}
+setcolor(WHITE);
+}
+setcolor(WHITE);
+}
+void unloading()
+{
+int gd=DETECT,gm,move=640,err;
+initgraph(&gd,&gm,"\bgi");
+err = graphresult();
+if (err!= grOk)
+{
+clrscr();
+window(15,30,40,23);
+//finalmessage(" ");
+textbackground(1);
+textcolor(WHITE);
+gotoxy(17,9);
+cprintf("Thanks For Using This Software ");
+gotoxy(17,11);
+cprintf("MAIL FOR RESPONCE TO US        ");
+gotoxy(17,13);
+cprintf("arun_kumar1131@rediffmail.com  ");
+gotoxy(17,15);
+cprintf("PRESS ANY KEY TO PROCEED ....  ");
+getch();
+exit(1);
+}
+cleardevice();
+while(move!=0)
+{
+if(move>10)
+{
+outtextxy(getmaxx()/2-20,getmaxy()/2,"WAIT UNLOADING FINISHING ...");
+}
+{
+rectangle(20,400,move,420);
+move=move-1;
+}
+}
+cleardevice();
+outtextxy(getmaxx()/2,getmaxy()/2,"THANKS FOR USING IT ....");
+outtextxy(getmaxx()/2,getmaxy()/2+15,"PRESS ANY KEY TO PROCEED ....");
+outtextxy(getmaxx()/2,getmaxy()/2+35,"MAIL FOR RESPONCE TO US ");
+setcolor(6);
+outtextxy(getmaxx()/2,getmaxy()/2+55,"arun_kumar1131@rediffmail.com");
+getch();
+cleardevice();
+closegraph();
+clrscr();
+}
+int findduplicate(char phone[])
+{
+   char *achr;
+   int i=1000;
+   char pho[10];
+   int flag=1;
+   FILE *fp;
+   struct cust customer;
+   strcpy(pho,phone);
+
+fp=fopen("emp.dat","rb+");
+if(fp==NULL){
+flag=1;
+}
+   rewind(fp);
+   while(fread(&customer,sizeof(customer),1,fp)==1)
+   {
+   i=i+1;
+   if(strcmp(customer.phone,pho)==0)
+      {
+       flag=0;
+       }
+    }
+    if(flag)
+    {
+    }
+   fclose(fp);
+   fcloseall();
+       return(flag);
+   }
+int validuser()
+{
+FILE *fp;
+char nam[10];
+char *pass;
+//int  go=0,g=0;
+int flag=1;
+struct regus  reg_user;
+textcolor(WHITE);
+textbackground(1);
+clrscr();
+fp=fopen("reg_user.dll","rb+");
+if(fp==NULL)
+{
+flag=1;
+statusbar("NO ANY  USER IDENTIFIED FOR IT");
+}
+gotoxy(24,9);
+       do
+
+  {
+  del_nline(11);
+   statusbar("ENTER SECURE NAME TO PROTECT UNAUTHORISED ACCESSING");
+   gotoxy(24,11);
+   cout<<"ENTER SUPER USER ID       : ";
+   gets(nam);
+  }while(!isalpha(nam[0]) || strlen(nam)>10);
+ do
+  {
+  del_nline(13);
+   statusbar("ENTER NEW PASSWORD WHICH IS USE FULL FOR YOU  ");
+   gotoxy(24,13);
+ pass = getpass("ENTER VALID KEY  PASSWORD : ");
+  }while(!isalpha(pass[0]) || strlen(pass)>10);
+rewind(fp);
+while(fread(®_user,sizeof(reg_user),1,fp)==1)
+{
+if((strcmp(reg_user.namepwd,nam)==0)&&(strcmp(reg_user.skpwd,pass)==0))
+{
+flag=0;
+}
+}
+if(flag==0)
+{
+fclose(fp);
+start();
+}
+if((flag<0)||(flag>0))
+{
+textcolor(WHITE+BLINK);
+textbackground(BLACK);
+clrscr();
+fclose(fp);
+gotoxy(24,8);
+cprintf("ACCESS DENIED");
+sound(200);
+delay(400);
+gotoxy(22,20);
+cprintf("PRESS ANY KEY ...............");
+nosound();
+getch();
+supervisor();
+}
+return 0;
+}
+void supervisor()
+{
+char ch;
+while(TRUE)
+{
+
+textcolor(WHITE);
+textbackground(1);
+clrscr();
+gotoxy(24,3);
+cprintf("TELEPHONE DIRECTORY SETUP ");
+printf("
+");
+repchar('*',80);
+gotoxy(24,8);
+cout<<" C. Create New User";
+gotoxy(24,10);
+cout<<" L. Login Now   ";
+gotoxy(24,12);
+cout<<" H. Halt And View Information ";
+gotoxy(24,14);
+cout<<" X. Final Logout ";
+statusbar("ESC->EXIT    Enter Your Choice ");
+switch(toupper(getche()))
+{
+case 'C': file_exists("reg_user.dll") ? validuser() :createuser();break;
+case 'L':validuser();break;
+case
+'H':del_nline(24,12);welcome();textcolor(WHITE);textbackground(1);clrscr()
+;break;
+case 'X':unloading();clrscr();flushall();fcloseall();exit(1);break;
+case ESC:unloading();clrscr();flushall();fcloseall();exit(1);break;
+}
+}
+}
+int file_exists(char *filename)
+{
+  return (access(filename, 0) == 0);
+}
+int createuser()
+{
+FILE *fp;
+char user[10];
+char pass[10];
+fp=fopen("reg_user.dll","wb+");
+if(fp==NULL)
+{
+statusbar("Unable To Create New User");
+getch();
+}
+struct regus reg;
+textcolor(WHITE);
+textbackground(1);
+clrscr();
+
+gotoxy(24,7);
+       do
+  {
+     del_nline(12);
+   statusbar("SUPERVISOR NAME MUST ENTER AND PUT IT YOUR RECORD ");
+   gotoxy(24,11);
+   cout<<"ENTER NEW  USER ID         : ";
+   gets(user);
+  }while(!isalpha(user[0]) || strlen(user)>10);
+ do
+  {del_nline(13);
+   statusbar("SUPERVISOR NAME MUST ENTER AND PUT IT YOUR RECORD ");
+   gotoxy(24,13);
+   cout<<"ENTER SUPER USER ID       : ";
+gets(pass);
+  }while(!isalpha(pass[0]) ||strlen(pass)>10);
+strcpy(reg.namepwd,user);
+strcpy(reg.skpwd,pass);
+rewind(fp);
+fwrite(®,sizeof(reg),1,fp);
+fclose(fp);
+return 0;
+}
+void welcome(void)
+{
+
+//int c=0;
+do
+{
+ clrscr();
+ textcolor(WHITE);
+  textbackground(rand()*10);
+ gotoxy(24,2);
+  cprintf("        TELEPHONE DIRECTORY     ");
+  textbackground(BLACK);
+  gotoxy(6,4);
+  cprintf("YOU CAN ADD NEW PERSON IDENTITY  ");
+    gotoxy(6,6);
+  cprintf("MODIFY AND RECORD ANY TIME ");
+    gotoxy(6,8);
+  cprintf("BACKUP FACILITY        ");
+    gotoxy(6,10);
+  cprintf("SECURE YOUR DATABASE FILE BY PASSWORD");
+    gotoxy(6,12);
+  cprintf("FULL SEARCH FACILITY BY NAME,LAST NAME BY PHONE ");
+    gotoxy(6,14);
+  cprintf("RECORD PRINTING AND PRINT TO YOUR DESIRED FILE  ");
+    gotoxy(6,16);
+  cprintf("FULLY TRANSPORTABLE") ;
+    gotoxy(6,18);
+  cprintf("SECURE YOUR IDENTITY ");
+ gotoxy(1,23);
+ cprintf("PRESS ANY KEY TO CONTINUE...");
+ delay(400);
+Pause();
+ }
+while(!kbhit());
+}
+void Pause(void)
+{
+  static char msg[] = "Esc aborts or press a key...";
+  int c;
+
+  statusbar( msg );         /* Put msg at bottom of screen   */
+
+  c = getch();            /* Read a character from kbd   */
+
+  if( ESC == c ){         /* Does user wish to leave?   */
+    //closegraph();         /* Change to text mode      */
+    exit( 1 );            /* Return to OS       */
+  }
+
+  if( 0 == c ){          /* Did use hit a non-ASCII key? */
+    c = getch();         /* Read scan code for keyboard   */
+  }
+
+ supervisor();
+
+}
+void StatusLine( char *msg )
+{
+  int height;
+int  gd=DETECT,gm;
+ initgraph(&gd,&gm,"");
+ setviewport( 0, 0, getmaxx(), getmaxy(), 1 );   /* Open port to full screen
+*/
+setcolor( 14 - 1 );      /* Set current color to white   */
+//  changetextstyle( DEFAULT_FONT, HORIZ_DIR, 1 );
+  settextjustify( CENTER_TEXT, TOP_TEXT );
+  setlinestyle( SOLID_LINE, 0, NORM_WIDTH );
+  setfillstyle( EMPTY_FILL, 0 );
+  height = textheight( "H" );           /* Detemine current height      */
+  bar( 0, getmaxy()-(height+4), getmaxx(), getmaxy() );
+  rectangle( 0, getmaxy()-(height+4), getmaxx(), getmaxy() );
+  outtextxy( getmaxx()/2, getmaxy()-(height+2), msg );
+  setviewport( 1, height+5, getmaxx()-1, getmaxy()-(height+5), 1 );
+
+}

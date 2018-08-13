@@ -1,0 +1,2627 @@
+#include <iostream.h>
+#include <conio.h>
+#include <math.h>
+#include <graphics.h>
+#include <process.h>
+#include <dos.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#define tcpath "d:\tc\bgi"
+#define yvalue 180
+#define yvalue2 300
+#define lineweight 3
+#define bdweight 10
+#define pi 3.1415
+//////////////////////
+int main_c_hz=90, main_c_amplitude=15, main_sr =2000;
+float main_c_frequency;
+int main_c_angle=90;
+int main_c_phase;
+int main_c_lcycle=200,main_temp;
+float main_c_sine_value[1000];
+///////////////////////////////////
+char bd_4main[20]="101011101";
+int y1=yvalue-20,x1=200,y2=yvalue;
+////////////////////////////////////carrier signal values
+char bd_4signal[9];
+int y12=yvalue2-40,x12=40,y22=yvalue2;
+int c_hz=20, c_amplitude=25, sr =4000;
+float c_frequency;
+int c_angle;
+int c_phase;
+int c_lcycle=400,temp;
+float c_sine_value[1000];
+////////////////////////////////////carrier 4 qam
+char bd_4qam[25];
+////////////////////////////////////
+struct ASK
+{
+float frequency,sine_value[1000];
+int phase;
+int amp0,amp1;
+int x;
+int noiseVal;
+}ask;
+int ask_sr=700,ask_lcycle=70;
+///////////////////////////////////
+struct FSK
+{
+float sine_value[1000];
+int hz0,hz1;
+int phase;
+int amp;
+int x;
+}fsk;
+int fsk_sr=700,fsk_lcycle=70;
+///////////////////////////////////
+struct PSK
+{
+float sine_value[1000];
+float frequency;
+int ang1,ang0;
+int phase0,phase1;
+int amp;
+int x;
+}psk;
+int psk_sr=700,psk_lcycle=70;
+///////////////////////////////////
+struct QAM
+{
+float sine_value[1000];
+float frequency;
+int ang1,ang2,ang3,ang4;
+int phase1,phase2,phase3,phase4;
+int amp1,amp2;
+int x;
+}qam;
+int qam_sr=700,qam_lcycle=70;
+///////////////////////////////////
+void initialgraph(void);
+void mainpage(void);
+void createmenu(void);
+////////////////////////////////////
+void creategraph_4main(void);
+void createDsignal_4main(void);
+void dsignal4_0_4main(int);
+void dsignal4_1_4main(int);
+void calc_sinewave_4main();
+void create_simple_wave_4main();
+void create_analoggraph_4main();
+///////////////////////////////////
+void askHandler(void);
+void fskHandler(void);
+void pskHandler(void);
+void qamHandler(void);
+void helpHandler(void);
+void exitHandler(void);
+/////////////////////////////
+void carrierDataBox();
+int carrierInputFun();
+void askDataBox();
+int askInputFun();
+void fskDataBox();
+int fskInputFun();
+void pskDataBox();
+int pskInputFun();
+void qamDataBox();
+int qamInputFun();
+void graphicText(int x,int y,char ch);
+////////////////////////////////
+void calc_sinewave();
+void view_data();
+void create_simple_wave();
+void create_graph();
+void show_int_graph(int val,int l,int x,int y);
+void creategraph_digital(void);
+void createDsignal_digital(void);
+void dsignal4_0_digital(int);
+void dsignal4_1_digital(int);
+/////////////////////////////
+void calc_ask_sinewave(int);
+void calc_askN_sinewave(int);
+void ask_main();
+void askN_main();
+void create_ask_waves();
+void create_graph_ask();
+/////////////////////////////
+void calc_fsk_sinewave(int);
+void fsk_main();
+void create_fsk_waves();
+void create_graph_fsk();
+/////////////////////////////
+void calc_psk_sinewave(int);
+void psk_main();
+void create_psk_waves();
+void create_graph_psk();
+/////////////////////////////
+void carrierDataBox_4qam();
+int carrierInputFun_4qam();
+void showDtable();
+void creategraph_Dqam(void);
+void createDsignal_Dqam(void);
+void dsignal4_0_Dqam(int);
+void dsignal4_1_Dqam(int);
+void calc_qam_sinewave(int,int);
+void qam_main();
+void create_qam_waves();
+void create_graph_qam();
+void showDtable2();
+/////////////////////////////
+void main()
+{
+initialgraph();
+mainpage();
+}
+/////////////////////////////
+void initialgraph()
+{
+int gd=DETECT, gm;
+initgraph(&gd, &gm, tcpath);
+}
+/////////////////////////////
+void mainpage()
+{
+y1=yvalue-20;x1=200;y2=yvalue;
+setfillstyle(1,1);
+bar(70,20,570,22);
+bar(70,65,570,67);
+setfillstyle(1,9);
+bar(70,22,570,64);
+setcolor(15);
+settextstyle(7,0,4);
+outtextxy(80,20,"Digital to Analog Modulation");
+setfillstyle(1,1);
+bar(190-2,120-2,410+2,190+2);
+bar(190-2,310-2,410+2,390+2);
+setcolor(1);
+setfillstyle(1,9);
+bar(190,120,410,190);
+bar3d(248,230,333,275,10,1);
+bar(190,310,410,390);
+setfillstyle(1,1);
+bar(295,194,305,220);
+bar(295,277,305,305);
+setcolor(15);
+settextstyle(2,0,4);
+outtextxy(252,240,"Digital/Analog");
+outtextxy(252,252,"  Modulation");
+creategraph_4main();
+createDsignal_4main();
+calc_sinewave_4main();
+create_simple_wave_4main();
+create_analoggraph_4main();
+setfillstyle(1,1);
+bar(460-2,240-2,520+2,265+2);
+bar(460-2,160-2,520+2,185+2);
+bar(460-2,320-2,520+2,345+2);
+setcolor(1);
+setlinestyle(1,1,9);
+line(344,252,458,252);
+line(440,172,440,333);
+line(440,172,460,172);
+line(440,333,460,333);
+line(540,172,540,333);
+line(520,172,540,172);
+line(520,333,540,333);
+line(540,252,560,252);
+bar(560-2,240-2,620+2,265+2);
+setfillstyle(1,9);
+bar(460,240,520,265);
+bar(460,160,520,185);
+bar(460,320,520,345);
+bar(560,240,620,265);
+setcolor(15);
+settextstyle(2,0,5);
+outtextxy(480,165,"ASK");
+outtextxy(480,245,"FSK");
+outtextxy(480,325,"PSK");
+outtextxy(580,245,"QAM");
+createmenu();
+//getch();
+}
+////////////////////////////
+void createmenu()
+{
+setfillstyle(1,8);
+bar(3,117,110,248);
+setfillstyle(1,1);
+bar(1,117,107,245);
+setfillstyle(1,9);
+bar(4,120,104,242);
+setfillstyle(1,1);
+bar(1,120,107,122);
+bar(1,140,107,142);
+bar(1,160,107,162);
+bar(1,180,107,182);
+bar(1,200,107,202);
+bar(1,220,107,222);
+bar(1,240,107,242);
+setcolor(15);
+settextstyle(2,0,5);
+outtextxy(38,122,"ASK");
+outtextxy(38,142,"FSK");
+outtextxy(38,162,"PSK");
+outtextxy(38,182,"QAM");
+outtextxy(38,202,"ABOUT-US");
+outtextxy(38,222,"EXIT");
+int x=4,y=124;
+int choice=1;
+setfillstyle(1,15);
+setcolor(9);
+bar(x,y,x+100,y+19-4);
+outtextxy(38,122,"ASK");
+char ch;
+setfillstyle(1,1);
+bar(1,441,639,444);
+bar(1,476,639,479);
+setfillstyle(1,9);
+bar(1,445,639,475);
+while(1)
+{
+//getch();
+switch (choice)
+{
+case 1:
+{
+setcolor(15);
+setfillstyle(1,9);bar(1,445,639,475);
+outtextxy(10,450,"Amplitude Shift Keying Technique");break;
+}
+case 2:
+{
+setcolor(15);
+setfillstyle(1,9);bar(1,445,639,475);
+outtextxy(10,450,"Frequency Shift Keying Technique");break;
+}
+case 3:
+{
+setcolor(15);
+setfillstyle(1,9);bar(1,445,639,475);
+outtextxy(10,450,"Phase Shift Keying Technique");break;
+}
+case 4:
+{
+setcolor(15);
+setfillstyle(1,9);bar(1,445,639,475);
+outtextxy(10,450,"QAM");break;
+}
+case 5:
+{
+setcolor(15);
+setfillstyle(1,9);bar(1,445,639,475);
+outtextxy(10,450,"Team profile and contact");break;
+}
+case 6:
+{
+setcolor(15);
+setfillstyle(1,9);bar(1,445,639,475);
+outtextxy(10,450,"Exit");break;
+}
+
+}
+setfillstyle(1,9);
+setcolor(15);
+switch(getch())
+{
+case 80: {if (choice == 6)choice=1;else choice+=1;break;}
+case 72: {if (choice == 1)choice=6;else choice-=1;break;}
+//case '0': exit(0);
+case '
+':
+{
+if (choice == 1) askHandler(); else
+if (choice == 2) fskHandler(); else
+if (choice == 3) pskHandler(); else
+if (choice == 4) qamHandler(); else
+if (choice == 5) helpHandler();else
+if (choice == 6) exit(0);//exitHandler();
+}
+}
+if (choice == 1)
+{
+bar(x,y+(19*5),x+100,y+(19*6));outtextxy(38,222,"EXIT");
+bar(x,y+19,x+100,y+(19*2));outtextxy(38,142,"FSK");
+}
+if (choice == 2)
+{
+bar(x,y,x+100,y+19);outtextxy(38,122,"ASK");
+bar(x,y+(19*2),x+100,y+(19*3));outtextxy(38,162,"PSK");
+}
+if (choice == 3)
+{
+bar(x,y+19,x+100,y+(19*2));outtextxy(38,142,"FSK");
+bar(x,y+(19*3),x+100,y+(19*4));outtextxy(38,182,"QAM");
+}
+if (choice == 4)
+{
+bar(x,y+(19*2),x+100,y+(19*3));outtextxy(38,162,"PSK");
+bar(x,y+(19*4),x+100,y+(19*5));outtextxy(38,202,"ABOUT-US");
+}
+if (choice == 5)
+{
+bar(x,y+(19*3),x+100,y+(19*4));outtextxy(38,182,"QAM");
+bar(x,y+(19*5),x+100,y+(19*6));outtextxy(38,222,"EXIT");
+}
+if (choice == 6)
+{
+bar(x,y+(19*4),x+100,y+(19*5));outtextxy(38,202,"ABOUT-US");
+bar(x,y,x+100,y+19);outtextxy(38,122,"ASK");
+}
+
+setfillstyle(1,15);
+setcolor(9);
+if (choice == 1)
+{
+bar(x,y,x+100,y+19);outtextxy(38,122,"ASK");
+}
+if (choice == 2)
+{bar(x,y+19,x+100,y+(19*2));outtextxy(38,142,"FSK");}
+if (choice == 3)
+{bar(x,y+(19*2),x+100,y+(19*3));outtextxy(38,162,"PSK");}
+if (choice == 4)
+{bar(x,y+(19*3),x+100,y+(19*4));outtextxy(38,182,"QAM");}
+if (choice == 5)
+{bar(x,y+(19*4),x+100,y+(19*5));outtextxy(38,202,"ABOUR-US");}
+if (choice == 6)
+{bar(x,y+(19*5),x+100,y+(19*6));outtextxy(38,222,"EXIT");}
+setfillstyle(1,1);
+bar(1,120,107,122);
+bar(1,140,107,142);
+bar(1,160,107,162);
+bar(1,180,107,182);
+bar(1,200,107,202);
+bar(1,220,107,222);
+bar(1,240,107,242);
+}
+}
+////////////////////////////////////////////////
+void creategraph_4main()
+{
+int cgx1=200,cgy1=130, cgx2=400,cgy2=yvalue;
+setcolor(15);
+setlinestyle(0,1,3);
+line(cgx1,cgy1,cgx1,cgy2);
+line(cgx1,cgy2,cgx2,cgy2);
+setcolor(8);
+setlinestyle(1,1,1);
+for(int i = cgx1+20; i<cgx2;i+=20)
+line(i,cgy1,i,cgy2);
+//getch();
+}
+/////////////////////////////////////////////////////
+void createDsignal_4main()
+{
+setcolor(1);
+int len=strlen(bd_4main);
+for (int i=0;i<len-1;i++)
+{
+if(bd_4main[i] == '0')
+{
+dsignal4_0_4main(i+1);
+}
+else
+{
+dsignal4_1_4main(i+1);
+}
+}
+}
+//////////////////////////////////////////////////////
+void dsignal4_0_4main(int pos)
+{
+setcolor(1);
+setlinestyle(0,1,lineweight);
+int x=x1;x1+=20;
+if (pos == 1 || (pos != 1 && bd_4main[pos-2] == '0'))
+line(x,y2,x+20,y2);
+else
+{
+line(x,y1,x,y2);
+line(x,y2,x+20,y2);
+}
+}
+///////////////////////////////////////////////////////
+void dsignal4_1_4main(int pos)
+{
+setcolor(1);
+setlinestyle(0,1,lineweight);
+int x=x1;x1+=20;
+if (pos == 1 || (pos != 1 && bd_4main[pos-2] == '1'))
+line(x,y1,x+20,y1);
+else
+{
+line(x,y1,x,y2);
+line(x,y1,x+20,y1);
+}
+}
+///////////////////////////////////////////////////////
+void calc_sinewave_4main()
+{
+main_c_frequency = (2 * pi * main_c_hz)/main_sr;
+for (int t = 0; t<main_c_lcycle;t++)
+main_c_sine_value[t] = main_c_amplitude * (sin((main_c_frequency*t)+
+main_c_phase));
+}
+/////////////////////////////
+void create_analoggraph_4main()
+{
+setcolor(15);
+line(200,350,400,350);
+line(200,320,200,380);
+}
+/////////////////////////////
+void create_simple_wave_4main()
+{
+int x=200,y=350,x1,y1;
+setcolor(1);
+setlinestyle(0,0,3);
+for(int i=0;i<main_c_lcycle;i++)
+{
+x1=x+i;
+if(main_c_sine_value[i] >= 0)
+y1=y-main_c_sine_value[i];
+else
+y1=y+((-1)*main_c_sine_value[i]);
+line(x1,y1,x1,y1);
+}
+}
+///////////////////////////////////
+void askHandler(void)
+{
+int z;
+do{
+setcolor(15);
+carrierDataBox();
+z=carrierInputFun();
+}while(z != 1);
+do{
+setcolor(15);
+askDataBox();
+z=askInputFun();
+}while(z != 1);
+cleardevice();
+/////////////////////digital part
+creategraph_digital();
+createDsignal_digital();
+getch();
+cleardevice();
+/////////////////////carrier signal
+calc_sinewave();
+create_simple_wave();
+create_graph();
+getch();
+cleardevice();
+/////////////////////askpart
+create_graph_ask();
+outtextxy(30,300,"Signal Without Noise ");
+ask_main();
+getch();
+cleardevice();
+if(ask.noiseVal == -1)
+mainpage();
+else
+/////////////////////askpart with noise
+{create_graph_ask();
+outtextxy(30,300,"Signal With Noise ");
+askN_main();
+getch();
+cleardevice();
+mainpage();
+}
+exit(0);
+}
+///////////////////////////////////
+void fskHandler(void)
+{
+int z;
+do{
+setcolor(15);
+carrierDataBox();
+z=carrierInputFun();
+}while(z != 1);
+do{
+setcolor(15);
+fskDataBox();
+z=fskInputFun();
+}while(z != 1);
+cleardevice();
+/////////////////////digital part
+creategraph_digital();
+createDsignal_digital();
+getch();
+cleardevice();
+/////////////////////carrier signal
+calc_sinewave();
+create_simple_wave();
+create_graph();
+getch();
+cleardevice();
+/////////////////////fskpart
+create_graph_fsk();
+fsk_main();
+getch();
+cleardevice();
+mainpage();
+//exit(0);
+}
+///////////////////////////////////
+void pskHandler(void)
+{
+int z;
+do{
+setcolor(15);
+carrierDataBox();
+z=carrierInputFun();
+}while(z != 1);
+do{
+setcolor(15);
+pskDataBox();
+z=pskInputFun();
+}while(z != 1);
+cleardevice();
+/////////////////////digital part
+creategraph_digital();
+createDsignal_digital();
+getch();
+cleardevice();
+/////////////////////carrier signal
+calc_sinewave();
+create_simple_wave();
+create_graph();
+getch();
+cleardevice();
+/////////////////////pskpart
+create_graph_psk();
+psk_main();
+getch();
+cleardevice();
+mainpage();
+//exit(0);
+}
+///////////////////////////////////
+void qamHandler(void)
+{
+int z;
+do{
+setcolor(15);
+carrierDataBox_4qam();
+z=carrierInputFun_4qam();
+}while(z != 1);
+do{
+setcolor(15);
+qamDataBox();
+z=qamInputFun();
+showDtable();
+getch();
+}while(z != 1);
+cleardevice();
+/////////////////////digital part
+creategraph_Dqam();
+createDsignal_Dqam();
+getch();
+cleardevice();
+/////////////////////carrier signal
+calc_sinewave();
+create_simple_wave();
+create_graph();
+getch();
+cleardevice();
+/////////////////////qampart
+create_graph_qam();
+qam_main();
+showDtable2();
+getch();
+cleardevice();
+mainpage();
+}
+///////////////////////////////////
+void helpHandler(void)
+{
+setfillstyle(1,0);
+bar(130,80,639,440);
+setfillstyle(1,8);
+bar(140-4,100-4,640+4,370+4);
+setfillstyle(1,15);
+bar(140,100,634,370);
+setfillstyle(1,9);
+bar(142,102,632,120);
+settextstyle(2,0,4);
+outtextxy(145,104,"Team Profile");
+setcolor(1);
+outtextxy(145,120+10,"Course Instructor   ");
+outtextxy(145,130+10,"-----------------   ");
+setcolor(9);
+outtextxy(145,150+10,"Kamran Ishaq Kukda");
+setcolor(1);
+outtextxy(145,170+10,"Team Leader         ");
+outtextxy(145,180+10,"-----------------   ");
+setcolor(9);
+outtextxy(145,200+10,"Arsalan Akhtar   ");
+outtextxy(145,210+10,"[ arsalan.akhtar@gmail.com ]");
+setcolor(1);
+outtextxy(145,230+10,"Team Members     ");
+outtextxy(145,240+10,"-----------------   ");
+setcolor(9);
+outtextxy(145,260+10,"Jawaid Iqbal Bhatti");
+outtextxy(145,270+10,"[ jawaid85@hotmail.com ]");
+outtextxy(145,290+10,"Kumail Haider");
+outtextxy(145,300+10,"[ kumi_here@hotmail.com ]");
+outtextxy(145,320+10,"Jibran Sabhi");
+outtextxy(145,330+10,"[ j_4_jibs@hotmail.com ]");
+getch();
+setfillstyle(1,0);
+bar(130,80,639,440);
+mainpage();
+}
+///////////////////////////////////
+void exitHandler(void)
+{
+cleardevice();
+outtextxy(10,10,"exit");
+getch();
+closegraph();
+}
+///////////////////////////////////
+void carrierDataBox()
+{
+setfillstyle(1,0);
+bar(130,80,639,440);
+setfillstyle(1,8);
+bar(140-4,100-4,640+4,270+4);
+setfillstyle(1,15);
+bar(140,100,634,270);
+setfillstyle(1,9);
+bar(142,102,632,120);
+settextstyle(2,0,4);
+outtextxy(145,104,"Enter 8 bits (1byte)");
+setfillstyle(1,8);
+bar(142,130,318,162);
+setfillstyle(1,1);
+bar(144,132,316,160);
+setfillstyle(1,15);
+int xabc=150,yabc=134,xxyz,yxyz=158;
+for(int i=0;i<=7;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,9);
+bar(142,180,632,198);
+outtextxy(145,182,"Carrier Signal Information");
+bar(142,204,220,222);
+outtextxy(145,206,"Amplitude");
+setfillstyle(1,8);
+bar(225,204,272,222);
+setfillstyle(1,1);
+bar(227,206,270,220);
+setfillstyle(1,15);
+xabc=230,yabc=208,xxyz,yxyz=218;
+for(i=0;i<=1;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,9);
+bar(142,224,220,242);
+outtextxy(145,226,"Frequency");
+setfillstyle(1,8);
+bar(225,224,272,242);
+setfillstyle(1,1);
+bar(227,226,270,240);
+setfillstyle(1,15);
+xabc=230,yabc=228,xxyz,yxyz=238;
+for(i=0;i<=1;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,9);
+bar(142,244,220,262);
+outtextxy(145,246,"Phase");
+setfillstyle(1,8);
+bar(225,244,292,262);
+setfillstyle(1,1);
+bar(227,246,290,260);
+setfillstyle(1,15);
+xabc=230,yabc=248,xxyz,yxyz=258;
+for(i=0;i<=2;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,1);
+bar(500,244,550,262);
+setfillstyle(1,9); //inner
+bar(500+2,244+2,550-2,262-2);
+setfillstyle(1,1);
+bar(560,244,610,262);
+setfillstyle(1,9);    //inner
+bar(560+2,244+2,610-2,262-2);
+outtextxy(510,247,"Reset");
+outtextxy(570,247,"Apply");
+}
+////////////////////////////////////////////////
+int carrierInputFun()
+{
+/////////////////////////////////digit
+int x1=150,x2=150,y1=134,y2=158;
+int i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+bd_4signal[i-1] = getche();
+if(bd_4signal[i-1] != '0' && bd_4signal[i-1] != '1')
+{i-=1;x2-=20;}
+graphicText(x1+4,y1+6,bd_4signal[i-1]);
+if(i == 8)break;
+x1=x2+2;
+}while(1);
+bd_4signal[8]='/0';
+/////////////////////////////////amplitude
+x1=230,x2=230,y1=208,y2=218;
+char t_afp[2];
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+4,y1,t_afp[i-1]);
+if(i == 2)break;
+x1=x2+2;
+}while(1);
+c_amplitude = atoi(t_afp);
+//////////////////////////////////////////frequency
+x1=230,x2=230,y1=228,y2=238;
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+4,y1,t_afp[i-1]);
+if(i == 2)break;
+x1=x2+2;
+}while(1);
+c_hz = atoi(t_afp);
+//////////////////////////////////////////phase
+x1=230,x2=230,y1=248,y2=258;
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+4,y1,t_afp[i-1]);
+if(i == 3)break;
+x1=x2+2;
+}while(1);
+c_angle = atoi(t_afp);
+/////////////////////////////////////////////////
+c_hz*=10;
+c_phase = c_angle*(2*pi/360);
+/////////////////////////////////////////////////button
+int choice=0; //0 done 1 reset
+//x1=502;y1=246;x2=548;y2=260;
+x1=562;y1=246;x2=608;y2=260;
+setcolor(9);
+setfillstyle(1,15); //inner
+bar(x1,y1,x2,y2);
+//outtextxy(510,247,"Reset");
+outtextxy(570,247,"Apply");
+while(1)
+{
+switch(getch())
+{
+case 77:
+case 75:
+{
+if(choice==0)
+{
+x1=562;y1=246;x2=608;y2=260;
+setcolor(15);setfillstyle(1,9);bar(x1,y1,x2,y2);outtextxy(570,247,"Apply")
+;
+choice=1;x1=502;y1=246;x2=548;y2=260;
+setcolor(9);setfillstyle(1,15);bar(x1,y1,x2,y2);outtextxy(510,247,"Reset")
+;
+}
+else if (choice==1)
+{
+x1=562;y1=246;x2=608;y2=260;
+setcolor(9);setfillstyle(1,15);bar(x1,y1,x2,y2);outtextxy(570,247,"Apply")
+;
+choice=0;x1=502;y1=246;x2=548;y2=260;
+setcolor(15);setfillstyle(1,9);bar(x1,y1,x2,y2);outtextxy(510,247,"Reset")
+;
+}
+break;
+}
+case '
+':
+if(choice == 0)return(1); else return(0);
+}
+}
+}
+///////////////////////////////////////////////
+void askDataBox()
+{
+setfillstyle(1,0);
+bar(130,80,639,440);
+setfillstyle(1,8);
+bar(140-4,100-4,640+4,220+4);
+setfillstyle(1,15);
+bar(140,100,634,220);
+setfillstyle(1,9);
+bar(142,102,632,120);
+setcolor(15);
+settextstyle(2,0,4);
+outtextxy(145,104,"Amplitude Shift Keying (ASK) Information");
+bar(142,124,320,142);
+outtextxy(145,126,"On/Off Keying Technique (OOK)");
+setfillstyle(1,8);
+bar(332,124,358,144);
+setfillstyle(1,1);
+bar(334,126,356,142);
+setfillstyle(1,15);
+int xabc=336,yabc=128,xxyz,yxyz=140;
+for(int i=0;i<=0;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,9);
+bar(142,146,320,164);
+outtextxy(145,146,"Amplitude for 0 bit");
+setfillstyle(1,8);
+bar(332,144,379,164);
+setfillstyle(1,1);
+bar(334,146,377,162);
+setfillstyle(1,15);
+xabc=336,yabc=148,xxyz,yxyz=160;
+for(i=0;i<=1;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,9);
+bar(142,166,320,184);
+outtextxy(145,166,"Amplitude for 1 bit");
+setfillstyle(1,8);
+bar(332,164,379,184);
+setfillstyle(1,1);
+bar(334,166,377,182);
+setfillstyle(1,15);
+xabc=336,yabc=168,xxyz,yxyz=180;
+for(i=0;i<=1;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,9);
+bar(142,186,320,204);
+outtextxy(145,188,"Noisy Enviornment");
+setfillstyle(1,8);
+bar(332,184,358,202);
+setfillstyle(1,1);
+bar(334,186,356,200);
+setfillstyle(1,15);
+xabc=336,yabc=188,xxyz,yxyz=198;
+for(i=0;i<=0;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,1);
+bar(500,184,550,204);
+setfillstyle(1,9); //inner
+bar(500+2,184+2,550-2,204-2);
+setfillstyle(1,1);
+bar(560,184,610,204);
+setfillstyle(1,9);    //inner
+bar(560+2,184+2,610-2,204-2);
+outtextxy(510,188,"Reset");
+outtextxy(570,188,"Apply");
+}
+///////////////////////////////////////////////
+int askInputFun()
+{
+ask.frequency = c_frequency;
+ask.phase = c_phase;
+int x1=336,y1=128,x2=354,y2=140;
+char ookCheck,t_afp[2];
+/////////////////////////////////ook check
+int i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+ookCheck = getche();
+if(ookCheck != 'n' && ookCheck != 'N' && ookCheck != 'Y' && ookCheck !=
+'y')
+{i-=1;x2-=20;}
+graphicText(x1+6,y1,ookCheck);
+if(i == 1)break;
+x1=x2+2;
+}while(1);
+////////////////////////////////amp0
+x1=336;x2=354;y1=148;y2=160;
+if (ookCheck=='y' || ookCheck=='Y')
+{
+ask.amp0 = 0;
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+bar(x1+20,y1,x2+20,y2);
+graphicText(x1+6,y1,'0');
+graphicText(x1+20+6,y1,'0');
+}
+else
+{
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+6,y1,t_afp[i-1]);
+if(i == 2)break;
+x1=x2+2;
+}while(1);
+ask.amp0=atoi(t_afp);
+}
+///////////////////////////////////////////////////amp1
+x1=336;x2=354;y1=168;y2=180;
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+6,y1,t_afp[i-1]);
+if(i == 2)break;
+x1=x2+2;
+}while(1);
+ask.amp1=atoi(t_afp);
+/////////////////////////////////////////////////
+x1=336;x2=354;y1=188;y2=198;
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+ookCheck = getche();
+if(ookCheck != 'n' && ookCheck != 'N' && ookCheck != 'Y' && ookCheck !=
+'y')
+{i-=1;x2-=20;}
+graphicText(x1+6,y1,ookCheck);
+if(i == 1)break;
+x1=x2+2;
+}while(1);
+if (ookCheck=='y' || ookCheck=='Y')
+ask.noiseVal=ask.amp1;
+else
+ask.noiseVal=-1;
+/////////////////////////////////////////////////
+int choice=0; //0 done 1 reset
+//x1=502;y1=186;x2=548;y2=200;
+x1=562;y1=186;x2=608;y2=202;
+setcolor(9);
+setfillstyle(1,15); //inner
+bar(x1,y1,x2,y2);
+//outtextxy(510,188,"Reset");
+outtextxy(570,188,"Apply");
+while(1)
+{
+switch(getch())
+{
+case 77:
+case 75:
+{
+if(choice==0)
+{
+x1=562;y1=186;x2=608;y2=202;
+setcolor(15);setfillstyle(1,9);bar(x1,y1,x2,y2);outtextxy(570,188,"Apply")
+;
+choice=1;x1=502;y1=186;x2=548;y2=202;
+setcolor(9);setfillstyle(1,15);bar(x1,y1,x2,y2);outtextxy(510,188,"Reset")
+;
+}
+else if (choice==1)
+{
+x1=562;y1=186;x2=608;y2=202;
+setcolor(9);setfillstyle(1,15);bar(x1,y1,x2,y2);outtextxy(570,188,"Apply")
+;
+choice=0;x1=502;y1=186;x2=548;y2=202;
+setcolor(15);setfillstyle(1,9);bar(x1,y1,x2,y2);outtextxy(510,188,"Reset")
+;
+}
+break;
+}
+case '
+':
+if(choice == 0)return(1); else return(0);
+}
+}
+/*getch();
+closegraph();
+cout<<ookCheck<<"
+"<<ask.amp0<<"
+"<<ask.amp1<<"
+"<<ask.noiseVal;
+getch();
+exit(0);
+*/
+}
+///////////////////////////////////////////////
+void graphicText(int x,int y,char ch)
+{
+switch(ch)
+{
+case '0':outtextxy(x,y,"0");break;
+case '1':outtextxy(x,y,"1");break;
+case '2':outtextxy(x,y,"2");break;
+case '3':outtextxy(x,y,"3");break;
+case '4':outtextxy(x,y,"4");break;
+case '5':outtextxy(x,y,"5");break;
+case '6':outtextxy(x,y,"6");break;
+case '7':outtextxy(x,y,"7");break;
+case '8':outtextxy(x,y,"8");break;
+case '9':outtextxy(x,y,"9");break;
+case 'n':outtextxy(x,y,"N");break;
+case 'N':outtextxy(x,y,"N");break;
+case 'y':outtextxy(x,y,"Y");break;
+case 'Y':outtextxy(x,y,"Y");break;
+case '-':outtextxy(x,y,"-");break;
+
+}
+}
+/////////////////////////////////////////////////////
+void calc_sinewave()
+{
+c_frequency = (2 * pi * c_hz)/sr;
+for (int t = 0; t<c_lcycle;t++)
+c_sine_value[t] = c_amplitude * (sin((c_frequency*t)+ c_phase));
+}
+/////////////////////////////
+void view_data()
+{
+clrscr();
+for (int t = 0,j=0; t<c_lcycle;t++,j++)
+{
+if(j==20){getch();j=0;}
+cout<<c_sine_value[t]<<"
+";
+}
+getch();
+}
+/////////////////////////////
+void create_graph()
+{
+int csx1=40,csy1=100, csx2=600,csy2=300;
+setcolor(14);
+show_int_graph(c_amplitude,2,csx1-25,csy2-csy1-c_amplitude-5);
+show_int_graph(((-1)*c_amplitude),3,csx1-30,csy2-csy1+c_amplitude-5);
+setlinestyle(0,0,1);
+line(csx1-4,csy2-csy1-c_amplitude,csx1+4,csy2-csy1-c_amplitude);
+line(csx1-4,csy2-csy1+c_amplitude,csx1+4,csy2-csy1+c_amplitude);
+setcolor(15);
+setlinestyle(1,1,1);
+line(csx1+6,csy2-5,csx1+c_lcycle-6,csy2-5);
+outtextxy(csx1+3,csy2-11,"<");
+outtextxy(csx1+c_lcycle-3,csy2-11,">");
+outtextxy((csx2/2)-80,csy2+5,"1 sec");
+setlinestyle(0,0,3);
+setcolor(4);
+line(csx1,csy1,csx1,csy2);
+line(csx1,csy2-csy1,csx2,csy2-csy1);
+setcolor(9);
+setlinestyle(1,1,1);
+for(int i = csx1+c_lcycle; i<csx2;i+=c_lcycle)
+line(i,csy1,i,csy2);
+outtextxy(csx1,csy2+100,"Amplitude   = ");
+outtextxy(csx1,csy2+120,"Frequency   = ");
+outtextxy(csx1,csy2+140,"Phase       = ");
+setcolor(15);
+show_int_graph(c_amplitude,2,csx1+80,csy2+100);
+show_int_graph(c_hz/10,2,csx1+80,csy2+120);
+show_int_graph(c_angle,3,csx1+80,csy2+140);
+settextstyle(1,0,4);
+setcolor(15);
+outtextxy(csx1,30,"CARRIER SIGNAL");
+setfillstyle(1,9);
+bar(csx1,70,csx1+250,72);
+settextstyle(2,0,4);setcolor(15);
+outtextxy(260,460,"Press any key to continue");
+//getch();
+}
+/////////////////////////////
+void create_simple_wave()
+{
+int x=40,y=200,x1,y1;
+setcolor(2);
+setlinestyle(0,0,3);
+for(int i=0;i<c_lcycle;i++)
+{
+x1=x+i;
+if(c_sine_value[i] >= 0)
+y1=y-c_sine_value[i];
+else
+y1=y+((-1)*c_sine_value[i]);
+line(x1,y1,x1,y1);
+}
+}
+/////////////////////////////////
+void show_int_graph(int val,int l,int x,int y)
+{
+char temp[10];
+itoa(val,temp,10);
+for(int i=0;i<l;i++)
+{
+x+=6;
+graphicText(x,y,temp[i]);
+}
+}
+////////////////////////////////////////////////////
+void creategraph_digital()
+{
+y12=yvalue2-40,x12=40,y22=yvalue2;
+int cgx1=40,cgy1=140, cgx2=500,cgy2=yvalue2;
+setcolor(4);
+setlinestyle(0,1,3);
+line(cgx1,cgy1,cgx1,cgy2);
+line(cgx1,cgy2,cgx2,cgy2);
+setcolor(14);
+setlinestyle(1,1,1);
+for(int i = cgx1+40; i<cgx2;i+=40)
+line(i,cgy1,i,cgy2);
+settextstyle(1,0,4);
+setcolor(15);
+outtextxy(x12,30,"DIGITAL SIGNAL");
+setfillstyle(1,9);
+bar(x12,70,x12+250,72);
+settextstyle(2,0,4);setcolor(15);
+outtextxy(260,460,"Press any key to continue");
+int a=52,b=100;
+for(i=0;i<=7;i++)
+{
+setcolor(15);
+graphicText(a,y22-100,bd_4signal[i]);
+setcolor(15);
+graphicText(b,400,bd_4signal[i]);
+a+=40;b+=7;
+}
+setcolor(9);
+outtextxy(40,400,"Data   = ");
+
+//getch();
+}
+/////////////////////////////////////////////////////
+void createDsignal_digital()
+{
+setcolor(2);
+int len=9;
+for (int i=0;i<len-1;i++)
+{
+if(bd_4signal[i] == '0')
+{
+dsignal4_0_digital(i+1);
+}
+else
+{
+dsignal4_1_digital(i+1);
+}
+}
+}
+//////////////////////////////////////////////////////
+void dsignal4_0_digital(int pos)
+{
+setcolor(2);
+setlinestyle(0,1,lineweight);
+int x=x12;x12+=40;
+if (pos == 1 || (pos != 1 && bd_4signal[pos-2] == '0'))
+line(x,y22,x+40,y22);
+else
+{
+line(x,y12,x,y22);
+line(x,y22,x+40,y22);
+}
+}
+///////////////////////////////////////////////////////
+void dsignal4_1_digital(int pos)
+{
+setcolor(2);
+setlinestyle(0,1,lineweight);
+int x=x12;x12+=40;
+if (pos == 1 || (pos != 1 && bd_4signal[pos-2] == '1'))
+line(x,y12,x+40,y12);
+else
+{
+line(x,y12,x,y22);
+line(x,y12,x+40,y12);
+}
+}
+///////////////////////////////////////////////////////
+void calc_ask_sinewave(int amp01)
+{
+ask.frequency = (2 * pi * c_hz)/ask_sr;
+for (int t = 0; t<ask_lcycle;t++)
+ask.sine_value[t] = amp01 * (sin((ask.frequency*t)+ ask.phase));
+}
+////////////////////////////////////////////////////////
+void calc_askN_sinewave(int amp01)
+{
+randomize();
+ask.frequency = (2 * pi * c_hz)/ask_sr;
+int namp=random(amp01);
+for (int t = 0,n=0; t<ask_lcycle;t++,n++)
+{
+if(n==1){namp=amp01+random(8);n=0;}
+ask.sine_value[t] = namp * (sin((ask.frequency*t)+ ask.phase));
+}
+}
+
+//////////////////////////////////
+void ask_main()
+{
+ask.x=32;
+for (int i = 0;i<8;i++)
+{
+if (bd_4signal[i] == '0')
+{
+calc_ask_sinewave(ask.amp0);
+create_ask_waves();
+}
+else
+{
+calc_ask_sinewave(ask.amp1);
+create_ask_waves();
+}
+}
+}
+////////////////////////////////////////////////////
+void askN_main()
+{
+ask.x=32;
+for (int i = 0;i<8;i++)
+{
+if (bd_4signal[i] == '0')
+{
+calc_askN_sinewave(ask.amp0);
+create_ask_waves();
+}
+else
+{
+calc_askN_sinewave(ask.amp1);
+create_ask_waves();
+}
+}
+}
+
+////////////////////////////////////////////////////
+void create_ask_waves()
+{
+int y=200,x1,y1;
+setcolor(2);
+setlinestyle(0,0,3);
+for(int i=0;i<ask_lcycle;i++)
+{
+x1=ask.x+i;
+if(ask.sine_value[i] >= 0)
+y1=y-ask.sine_value[i];
+else
+y1=y+((-1)*ask.sine_value[i]);
+line(x1,y1,x1,y1);
+}
+ask.x=x1;
+}
+///////////////////////////////////////////////////////
+void create_graph_ask()
+{
+int csx1=30,csy1=100, csx2=620,csy2=300;
+setcolor(15);
+show_int_graph(ask.amp0,2,csx1-25,csy2-csy1-ask.amp0-5);
+show_int_graph(((-1)*ask.amp0),3,csx1-30,csy2-csy1+ask.amp0-5);
+setlinestyle(0,0,1);
+line(csx1-4,csy2-csy1-ask.amp0,csx1+4,csy2-csy1-ask.amp0);
+line(csx1-4,csy2-csy1+ask.amp0,csx1+4,csy2-csy1+ask.amp0);
+show_int_graph(ask.amp1,2,csx1-25,csy2-csy1-ask.amp1-5);
+show_int_graph(((-1)*ask.amp1),3,csx1-30,csy2-csy1+ask.amp1-5);
+setlinestyle(0,0,1);
+line(csx1-4,csy2-csy1-ask.amp1,csx1+4,csy2-csy1-ask.amp1);
+line(csx1-4,csy2-csy1+ask.amp1,csx1+4,csy2-csy1+ask.amp1);
+setcolor(4);
+setlinestyle(0,0,3);
+line(csx1,csy1,csx1,csy2);
+line(csx1,csy2-csy1,csx2,csy2-csy1);
+setcolor(9);
+setlinestyle(1,1,1);
+for(int i = csx1+ask_lcycle; i<csx2;i+=ask_lcycle-1)
+line(i,csy1,i,csy2);
+outtextxy(csx1,csy2+100,"Amplitude for 0  = ");
+outtextxy(csx1,csy2+120,"Amplitude for 1  = ");
+outtextxy(csx1,csy2+140,"Frequency        = ");
+outtextxy(csx1,csy2+160,"Phase            = ");
+setcolor(15);
+show_int_graph(ask.amp0,2,csx1+160,csy2+100);
+show_int_graph(ask.amp1,2,csx1+160,csy2+120);
+show_int_graph(c_hz/10,2,csx1+160,csy2+140);
+show_int_graph(c_angle,3,csx1+160,csy2+160);
+settextstyle(1,0,4);
+setcolor(15);
+outtextxy(csx1,30,"Amplitude Shift Keying");
+setfillstyle(1,9);
+bar(csx1,70,csx1+370,72);
+settextstyle(2,0,4);setcolor(15);
+outtextxy(260,468,"Press any key to continue");
+int a=54,b=csx1+166;
+for(i=0;i<=7;i++)
+{
+setcolor(15);
+graphicText(a,csy2-195,bd_4signal[i]);
+setcolor(15);
+graphicText(b,380,bd_4signal[i]);
+a+=ask_lcycle;b+=7;
+}
+setcolor(9);
+outtextxy(30,380,"Data             = ");
+//getch();
+}
+//////////////////////////////////////////////////////////////////
+void fskDataBox()
+{
+setfillstyle(1,0);
+bar(130,80,639,440);
+setfillstyle(1,8);
+bar(140-4,100-4,640+4,220+4);
+setfillstyle(1,15);
+bar(140,100,634,220);
+setfillstyle(1,9);
+bar(142,102,632,120);
+setcolor(15);
+settextstyle(2,0,4);
+outtextxy(145,104,"Frequency Shift Keying (ASK) Information");
+setfillstyle(1,9);
+bar(142,146,320,164);
+outtextxy(145,146,"Frequency for 0 bit");
+setfillstyle(1,8);
+bar(332,144,379,164);
+setfillstyle(1,1);
+bar(334,146,377,162);
+setfillstyle(1,15);
+int xabc=336,yabc=148,xxyz,yxyz=160;
+for(int i=0;i<=1;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,9);
+bar(142,166,320,184);
+outtextxy(145,166,"Frequency for 1 bit");
+setfillstyle(1,8);
+bar(332,164,379,184);
+setfillstyle(1,1);
+bar(334,166,377,182);
+setfillstyle(1,15);
+xabc=336,yabc=168,xxyz,yxyz=180;
+for(i=0;i<=1;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,1);
+bar(500,184,550,204);
+setfillstyle(1,9); //inner
+bar(500+2,184+2,550-2,204-2);
+setfillstyle(1,1);
+bar(560,184,610,204);
+setfillstyle(1,9);    //inner
+bar(560+2,184+2,610-2,204-2);
+outtextxy(510,188,"Reset");
+outtextxy(570,188,"Apply");
+}
+///////////////////////////////////////////////
+int fskInputFun()
+{
+fsk.amp = c_amplitude;
+fsk.phase = c_phase;
+int x1=336,y1=128,x2=354,y2=140;
+char ookCheck,t_afp[2];
+/////////////////////////////////ook check
+int i=0;
+x1=336;x2=354;y1=148;y2=160;
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+6,y1,t_afp[i-1]);
+if(i == 2)break;
+x1=x2+2;
+}while(1);
+fsk.hz0 = atoi(t_afp);
+///////////////////////////////////////////////////amp1
+x1=336;x2=354;y1=168;y2=180;
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+6,y1,t_afp[i-1]);
+if(i == 2)break;
+x1=x2+2;
+}while(1);
+fsk.hz1=atoi(t_afp);
+/////////////////////////////////////////////////
+int choice=0; //0 done 1 reset
+//x1=502;y1=186;x2=548;y2=200;
+x1=562;y1=186;x2=608;y2=202;
+setcolor(9);
+setfillstyle(1,15); //inner
+bar(x1,y1,x2,y2);
+//outtextxy(510,188,"Reset");
+outtextxy(570,188,"Apply");
+while(1)
+{
+switch(getch())
+{
+case 77:
+case 75:
+{
+if(choice==0)
+{
+x1=562;y1=186;x2=608;y2=202;
+setcolor(15);setfillstyle(1,9);bar(x1,y1,x2,y2);outtextxy(570,188,"Apply")
+;
+choice=1;x1=502;y1=186;x2=548;y2=202;
+setcolor(9);setfillstyle(1,15);bar(x1,y1,x2,y2);outtextxy(510,188,"Reset")
+;
+}
+else if (choice==1)
+{
+x1=562;y1=186;x2=608;y2=202;
+setcolor(9);setfillstyle(1,15);bar(x1,y1,x2,y2);outtextxy(570,188,"Apply")
+;
+choice=0;x1=502;y1=186;x2=548;y2=202;
+setcolor(15);setfillstyle(1,9);bar(x1,y1,x2,y2);outtextxy(510,188,"Reset")
+;
+}
+break;
+}
+case '
+':
+if(choice == 0)return(1); else return(0);
+}
+}
+}
+///////////////////////////////////////////////
+void calc_fsk_sinewave(int hz01)
+{
+float frequency;
+frequency = (2 * pi * hz01)/fsk_sr;
+for (int t = 0; t<fsk_lcycle;t++)
+fsk.sine_value[t] = fsk.amp * (sin((frequency*t)+ fsk.phase));
+}
+////////////////////////////////////////////////
+void fsk_main()
+{
+fsk.x=32;
+for (int i = 0;i<8;i++)
+{
+if (bd_4signal[i] == '0')
+{
+calc_fsk_sinewave(fsk.hz0*10);
+create_fsk_waves();
+}
+else
+{
+calc_fsk_sinewave(fsk.hz1*10);
+create_fsk_waves();
+}
+}
+}
+////////////////////////////////////////////////////
+void create_fsk_waves()
+{
+int y=200,x1,y1;
+setcolor(2);
+setlinestyle(0,0,3);
+for(int i=0;i<fsk_lcycle;i++)
+{
+x1=fsk.x+i;
+if(fsk.sine_value[i] >= 0)
+y1=y-fsk.sine_value[i];
+else
+y1=y+((-1)*fsk.sine_value[i]);
+line(x1,y1,x1,y1);
+}
+fsk.x=x1;
+}
+///////////////////////////////////////////////////////
+void create_graph_fsk()
+{
+int csx1=30,csy1=100, csx2=620,csy2=300;
+setcolor(15);
+show_int_graph(fsk.amp,2,csx1-25,csy2-csy1-fsk.amp-5);
+show_int_graph(((-1)*fsk.amp),3,csx1-30,csy2-csy1+fsk.amp-5);
+setlinestyle(0,0,1);
+line(csx1-4,csy2-csy1-fsk.amp,csx1+4,csy2-csy1-fsk.amp);
+line(csx1-4,csy2-csy1+fsk.amp,csx1+4,csy2-csy1+fsk.amp);
+setcolor(4);
+setlinestyle(0,0,3);
+line(csx1,csy1,csx1,csy2);
+line(csx1,csy2-csy1,csx2,csy2-csy1);
+setcolor(9);
+setlinestyle(1,1,1);
+for(int i = csx1+fsk_lcycle; i<csx2;i+=fsk_lcycle-1)
+line(i,csy1,i,csy2);
+outtextxy(csx1,csy2+100,"Frequency for 0  = ");
+outtextxy(csx1,csy2+120,"Frequency for 1  = ");
+outtextxy(csx1,csy2+140,"Amplitude        = ");
+outtextxy(csx1,csy2+160,"Phase            = ");
+setcolor(15);
+show_int_graph(fsk.hz0,2,csx1+160,csy2+100);
+show_int_graph(fsk.hz1,2,csx1+160,csy2+120);
+show_int_graph(fsk.amp,2,csx1+160,csy2+140);
+show_int_graph(c_angle,3,csx1+160,csy2+160);
+settextstyle(1,0,4);
+setcolor(15);
+outtextxy(csx1,30,"Frequency Shift Keying");
+setfillstyle(1,9);
+bar(csx1,70,csx1+370,72);
+settextstyle(2,0,4);setcolor(15);
+outtextxy(260,468,"Press any key to continue");
+int a=54,b=csx1+166;
+for(i=0;i<=7;i++)
+{
+setcolor(15);
+graphicText(a,csy2-195,bd_4signal[i]);
+setcolor(15);
+graphicText(b,380,bd_4signal[i]);
+a+=ask_lcycle;b+=7;
+}
+setcolor(9);
+outtextxy(30,380,"Data             = ");
+//getch();
+}
+//////////////////////////////////////////////
+void pskDataBox()
+{
+setfillstyle(1,0);
+bar(130,80,639,440);
+setfillstyle(1,8);
+bar(140-4,100-4,640+4,220+4);
+setfillstyle(1,15);
+bar(140,100,634,220);
+setfillstyle(1,9);
+bar(142,102,632,120);
+setcolor(15);
+settextstyle(2,0,4);
+outtextxy(145,104,"Phase Shift Keying (ASK) Information");
+setfillstyle(1,9);
+bar(142,146,320,164);
+outtextxy(145,146,"Phase for 0 bit");
+setfillstyle(1,8);
+bar(332,144,399,164);
+setfillstyle(1,1);
+bar(334,146,397,162);
+setfillstyle(1,15);
+int xabc=336,yabc=148,xxyz,yxyz=160;
+for(int i=0;i<=2;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,9);
+bar(142,166,320,184);
+outtextxy(145,166,"Phase for 1 bit");
+setfillstyle(1,8);
+bar(332,164,399,184);
+setfillstyle(1,1);
+bar(334,166,397,182);
+setfillstyle(1,15);
+xabc=336,yabc=168,xxyz,yxyz=180;
+for(i=0;i<=2;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,1);
+bar(500,184,550,204);
+setfillstyle(1,9); //inner
+bar(500+2,184+2,550-2,204-2);
+setfillstyle(1,1);
+bar(560,184,610,204);
+setfillstyle(1,9);    //inner
+bar(560+2,184+2,610-2,204-2);
+outtextxy(510,188,"Reset");
+outtextxy(570,188,"Apply");
+}
+///////////////////////////////////////////////
+int pskInputFun()
+{
+psk.amp = c_amplitude;
+psk.frequency = c_frequency;
+int x1=336,y1=128,x2=354,y2=140;
+char ookCheck,t_afp[3];
+int i=0;
+x1=336;x2=354;y1=148;y2=160;
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+6,y1,t_afp[i-1]);
+if(i == 3)break;
+x1=x2+2;
+}while(1);
+psk.ang0 = atoi(t_afp);
+psk.phase0 = psk.ang0*(2*pi/360);
+///////////////////////////////////////////////////amp1
+x1=336;x2=354;y1=168;y2=180;
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+6,y1,t_afp[i-1]);
+if(i == 3)break;
+x1=x2+2;
+}while(1);
+psk.ang1=atoi(t_afp);
+psk.phase1 = psk.ang1*(2*pi/360);
+/////////////////////////////////////////////////
+int choice=0; //0 done 1 reset
+//x1=502;y1=186;x2=548;y2=200;
+x1=562;y1=186;x2=608;y2=202;
+setcolor(9);
+setfillstyle(1,15); //inner
+bar(x1,y1,x2,y2);
+//outtextxy(510,188,"Reset");
+outtextxy(570,188,"Apply");
+while(1)
+{
+switch(getch())
+{
+case 77:
+case 75:
+{
+if(choice==0)
+{
+x1=562;y1=186;x2=608;y2=202;
+setcolor(15);setfillstyle(1,9);bar(x1,y1,x2,y2);outtextxy(570,188,"Apply")
+;
+choice=1;x1=502;y1=186;x2=548;y2=202;
+setcolor(9);setfillstyle(1,15);bar(x1,y1,x2,y2);outtextxy(510,188,"Reset")
+;
+}
+else if (choice==1)
+{
+x1=562;y1=186;x2=608;y2=202;
+setcolor(9);setfillstyle(1,15);bar(x1,y1,x2,y2);outtextxy(570,188,"Apply")
+;
+choice=0;x1=502;y1=186;x2=548;y2=202;
+setcolor(15);setfillstyle(1,9);bar(x1,y1,x2,y2);outtextxy(510,188,"Reset")
+;
+}
+break;
+}
+case '
+':
+if(choice == 0)return(1); else return(0);
+}
+}
+}
+///////////////////////////////////////////////
+void calc_psk_sinewave(int ph01)
+{
+float frequency;
+frequency = (2 * pi * c_hz)/psk_sr;
+for (int t = 0; t<psk_lcycle;t++)
+psk.sine_value[t] = psk.amp * (sin((frequency*t)+ ph01));
+}
+////////////////////////////////////////////////
+void psk_main()
+{
+psk.x=32;
+for (int i = 0;i<8;i++)
+{
+if (bd_4signal[i] == '0')
+{
+calc_psk_sinewave(psk.phase0);
+create_psk_waves();
+}
+else
+{
+calc_psk_sinewave(psk.phase1);
+create_psk_waves();
+}
+}
+}
+////////////////////////////////////////////////////
+void create_psk_waves()
+{
+int y=200,x1,y1;
+setcolor(2);
+setlinestyle(0,0,3);
+for(int i=0;i<psk_lcycle;i++)
+{
+x1=psk.x+i;
+if(psk.sine_value[i] >= 0)
+y1=y-psk.sine_value[i];
+else
+y1=y+((-1)*psk.sine_value[i]);
+line(x1,y1,x1,y1);
+}
+psk.x=x1;
+}
+///////////////////////////////////////////////////////
+void create_graph_psk()
+{
+int csx1=30,csy1=100, csx2=620,csy2=300;
+setcolor(15);
+show_int_graph(psk.amp,2,csx1-25,csy2-csy1-psk.amp-5);
+show_int_graph(((-1)*psk.amp),3,csx1-30,csy2-csy1+psk.amp-5);
+setlinestyle(0,0,1);
+line(csx1-4,csy2-csy1-psk.amp,csx1+4,csy2-csy1-psk.amp);
+line(csx1-4,csy2-csy1+psk.amp,csx1+4,csy2-csy1+psk.amp);
+setcolor(4);
+setlinestyle(0,0,3);
+line(csx1,csy1,csx1,csy2);
+line(csx1,csy2-csy1,csx2,csy2-csy1);
+setcolor(9);
+setlinestyle(1,1,1);
+for(int i = csx1+psk_lcycle; i<csx2;i+=psk_lcycle-1)
+line(i,csy1,i,csy2);
+outtextxy(csx1,csy2+100,"Phase for 0      = ");
+outtextxy(csx1,csy2+120,"Phase for 1      = ");
+outtextxy(csx1,csy2+140,"Amplitude        = ");
+outtextxy(csx1,csy2+160,"Frequency        = ");
+setcolor(15);
+show_int_graph(psk.ang0,3,csx1+160,csy2+100);
+show_int_graph(psk.ang1,3,csx1+160,csy2+120);
+show_int_graph(psk.amp,2,csx1+160,csy2+140);
+show_int_graph(psk.frequency,2,csx1+160,csy2+160);
+settextstyle(1,0,4);
+setcolor(15);
+outtextxy(csx1,30,"Phase Shift Keying");
+setfillstyle(1,9);
+bar(csx1,70,csx1+370,72);
+settextstyle(2,0,4);setcolor(15);
+outtextxy(260,468,"Press any key to continue");
+int a=54,b=csx1+166;
+for(i=0;i<=7;i++)
+{
+setcolor(15);
+graphicText(a,csy2-195,bd_4signal[i]);
+setcolor(15);
+graphicText(b,380,bd_4signal[i]);
+a+=ask_lcycle;b+=7;
+}
+setcolor(9);
+outtextxy(30,380,"Data             = ");
+//getch();
+}
+//////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//
+void carrierDataBox_4qam()
+{
+setfillstyle(1,0);
+bar(130,80,639,440);
+setfillstyle(1,8);
+bar(140-4,100-4,640+4,270+4);
+setfillstyle(1,15);
+bar(140,100,634,270);
+setfillstyle(1,9);
+bar(142,102,632,120);
+settextstyle(2,0,4);
+outtextxy(145,104,"Enter 24 bits (3 bytes)");
+setfillstyle(1,8);
+bar(142,130,560,162);
+setfillstyle(1,1);
+bar(144,132,558,160);
+setfillstyle(1,15);
+int xabc=150,yabc=134,xxyz,yxyz=158;
+for(int i=0;i<=23;i++)
+{
+xxyz=xabc+15;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,9);
+bar(142,180,632,198);
+outtextxy(145,182,"Carrier Signal Information");
+bar(142,204,220,222);
+outtextxy(145,206,"Amplitude");
+setfillstyle(1,8);
+bar(225,204,272,222);
+setfillstyle(1,1);
+bar(227,206,270,220);
+setfillstyle(1,15);
+xabc=230,yabc=208,xxyz,yxyz=218;
+for(i=0;i<=1;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,9);
+bar(142,224,220,242);
+outtextxy(145,226,"Frequency");
+setfillstyle(1,8);
+bar(225,224,272,242);
+setfillstyle(1,1);
+bar(227,226,270,240);
+setfillstyle(1,15);
+xabc=230,yabc=228,xxyz,yxyz=238;
+for(i=0;i<=1;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,9);
+bar(142,244,220,262);
+outtextxy(145,246,"Phase");
+setfillstyle(1,8);
+bar(225,244,292,262);
+setfillstyle(1,1);
+bar(227,246,290,260);
+setfillstyle(1,15);
+xabc=230,yabc=248,xxyz,yxyz=258;
+for(i=0;i<=2;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,1);
+bar(500,244,550,262);
+setfillstyle(1,9); //inner
+bar(500+2,244+2,550-2,262-2);
+setfillstyle(1,1);
+bar(560,244,610,262);
+setfillstyle(1,9);    //inner
+bar(560+2,244+2,610-2,262-2);
+outtextxy(510,247,"Reset");
+outtextxy(570,247,"Apply");
+}
+////////////////////////////////////////////////
+int carrierInputFun_4qam()
+{
+/////////////////////////////////digit
+int x1=150,x2=150,y1=134,y2=158;
+int i=0;
+do{
+i+=1;
+x2=x1+(15);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+bd_4qam[i-1] = getche();
+if(bd_4qam[i-1] != '0' && bd_4qam[i-1] != '1')
+{i-=1;x2-=20;}
+graphicText(x1+4,y1+6,bd_4qam[i-1]);
+if(i == 24)break;
+x1=x2+2;
+}while(1);
+bd_4qam[24]='/0';
+/////////////////////////////////amplitude
+x1=230,x2=230,y1=208,y2=218;
+char t_afp[2];
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+4,y1,t_afp[i-1]);
+if(i == 2)break;
+x1=x2+2;
+}while(1);
+c_amplitude = atoi(t_afp);
+//////////////////////////////////////////frequency
+x1=230,x2=230,y1=228,y2=238;
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+4,y1,t_afp[i-1]);
+if(i == 2)break;
+x1=x2+2;
+}while(1);
+c_hz = atoi(t_afp);
+//////////////////////////////////////////phase
+x1=230,x2=230,y1=248,y2=258;
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+4,y1,t_afp[i-1]);
+if(i == 3)break;
+x1=x2+2;
+}while(1);
+c_angle = atoi(t_afp);
+/////////////////////////////////////////////////
+c_hz*=10;
+c_phase = c_angle*(2*pi/360);
+/////////////////////////////////////////////////button
+int choice=0; //0 done 1 reset
+//x1=502;y1=246;x2=548;y2=260;
+x1=562;y1=246;x2=608;y2=260;
+setcolor(9);
+setfillstyle(1,15); //inner
+bar(x1,y1,x2,y2);
+//outtextxy(510,247,"Reset");
+outtextxy(570,247,"Apply");
+while(1)
+{
+switch(getch())
+{
+case 77:
+case 75:
+{
+if(choice==0)
+{
+x1=562;y1=246;x2=608;y2=260;
+setcolor(15);setfillstyle(1,9);bar(x1,y1,x2,y2);outtextxy(570,247,"Apply")
+;
+choice=1;x1=502;y1=246;x2=548;y2=260;
+setcolor(9);setfillstyle(1,15);bar(x1,y1,x2,y2);outtextxy(510,247,"Reset")
+;
+}
+else if (choice==1)
+{
+x1=562;y1=246;x2=608;y2=260;
+setcolor(9);setfillstyle(1,15);bar(x1,y1,x2,y2);outtextxy(570,247,"Apply")
+;
+choice=0;x1=502;y1=246;x2=548;y2=260;
+setcolor(15);setfillstyle(1,9);bar(x1,y1,x2,y2);outtextxy(510,247,"Reset")
+;
+}
+break;
+}
+case '
+':
+if(choice == 0)return(1); else return(0);
+}
+}
+}
+///////////////////////////////////////////////
+void qamDataBox()
+{
+setfillstyle(1,0);
+bar(130,80,639,440);
+setfillstyle(1,8);
+bar(140-4,100-4,640+4,246+4);
+setfillstyle(1,15);
+bar(140,100,634,246);
+setfillstyle(1,9);
+bar(142,102,632,120);
+setcolor(15);
+settextstyle(2,0,4);
+outtextxy(145,104,"Quadrature Amplitude Modulation (QAM)");
+bar(142,124,320,142);
+outtextxy(145,126,"First Amplitude");
+setfillstyle(1,8);
+bar(332,124,379,144);
+setfillstyle(1,1);
+bar(334,126,377,142);
+setfillstyle(1,15);
+int xabc=336,yabc=128,xxyz,yxyz=140;
+for(int i=0;i<=1;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,9);
+bar(142,146,320,164);
+outtextxy(145,146,"Second Amplitude");
+setfillstyle(1,8);
+bar(332,144,379,164);
+setfillstyle(1,1);
+bar(334,146,377,162);
+setfillstyle(1,15);
+xabc=336,yabc=148,xxyz,yxyz=160;
+for(i=0;i<=1;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,9);
+bar(142,166,320,184);
+outtextxy(145,166,"First Phase");
+setfillstyle(1,8);
+bar(332,164,399,184);
+setfillstyle(1,1);
+bar(334,166,397,182);
+setfillstyle(1,15);
+xabc=336,yabc=168,xxyz,yxyz=180;
+for(i=0;i<=2;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,9);
+bar(142,186,320,204);
+outtextxy(145,188,"Second Phase");
+setfillstyle(1,8);
+bar(332,184,399,202);
+setfillstyle(1,1);
+bar(334,186,397,200);
+setfillstyle(1,15);
+xabc=336,yabc=188,xxyz,yxyz=198;
+for(i=0;i<=2;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,9);
+bar(142,206,320,224);
+outtextxy(145,208,"Third Phase");
+setfillstyle(1,8);
+bar(332,203,399,222);
+setfillstyle(1,1);
+bar(334,206,397,220);
+setfillstyle(1,15);
+xabc=336,yabc=208,xxyz,yxyz=218;
+for(i=0;i<=2;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,9);
+bar(142,226,320,244);
+outtextxy(145,228,"Fourth Phase");
+setfillstyle(1,8);
+bar(332,223,399,242);
+setfillstyle(1,1);
+bar(334,226,397,240);
+setfillstyle(1,15);
+xabc=336,yabc=228,xxyz,yxyz=238;
+for(i=0;i<=2;i++)
+{
+xxyz=xabc+18;
+bar(xabc,yabc,xxyz,yxyz);
+xabc=xxyz+2;
+}
+setfillstyle(1,1);
+bar(500,224,550,244);
+setfillstyle(1,9); //inner
+bar(500+2,224+2,550-2,244-2);
+setfillstyle(1,1);
+bar(560,224,610,244);
+setfillstyle(1,9);    //inner
+bar(560+2,224+2,610-2,244-2);
+outtextxy(510,228,"Reset");
+outtextxy(570,228,"Apply");
+}
+///////////////////////////////////////////////
+int qamInputFun()
+{
+qam.frequency = c_frequency;
+char t_afp[3];
+int i=0;
+i=0;
+/////////////////////////////////////////////amp1
+int x1=336,y1=128,x2=354,y2=140;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+6,y1,t_afp[i-1]);
+if(i == 2)break;
+x1=x2+2;
+}while(1);
+qam.amp1 = atoi(t_afp);
+///////////////////////////////////////////////////amp2
+x1=336;x2=354;y1=148;y2=160;
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+6,y1,t_afp[i-1]);
+if(i == 2)break;
+x1=x2+2;
+}while(1);
+qam.amp2=atoi(t_afp);
+/////////////////////////////////////////////////phase1
+x1=336;x2=354;y1=168;y2=180;
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+6,y1,t_afp[i-1]);
+if(i == 3)break;
+x1=x2+2;
+}while(1);
+qam.ang1=atoi(t_afp);
+qam.phase1 = qam.ang1*(2*pi/360);
+/////////////////////////////////////////////////phase2
+x1=336;x2=354;y1=188;y2=198;
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+6,y1,t_afp[i-1]);
+if(i == 3)break;
+x1=x2+2;
+}while(1);
+qam.ang2=atoi(t_afp);
+qam.phase2 = qam.ang2*(2*pi/360);
+/////////////////////////////////////////////////phase3
+x1=336;x2=354;y1=208;y2=218;
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+6,y1,t_afp[i-1]);
+if(i == 3)break;
+x1=x2+2;
+}while(1);
+qam.ang3=atoi(t_afp);
+qam.phase3 = qam.ang3*(2*pi/360);
+/////////////////////////////////////////////////phase4
+x1=336;x2=354;y1=228;y2=238;
+i=0;
+do{
+i+=1;
+x2=x1+(18);
+setfillstyle(1,9);
+bar(x1,y1,x2,y2);
+t_afp[i-1] = getche();
+if(t_afp[i-1] < '0' || t_afp[i-1] > '9')
+{i-=1;x2-=20;}
+graphicText(x1+6,y1,t_afp[i-1]);
+if(i == 3)break;
+x1=x2+2;
+}while(1);
+qam.ang4=atoi(t_afp);
+qam.phase4 = qam.ang4*(2*pi/360);
+/////////////////////////////////////////////////
+int choice=0; //0 done 1 reset
+//x1=502;y1=186;x2=548;y2=200;
+x1=562;y1=226;x2=608;y2=242;
+setcolor(9);
+setfillstyle(1,15); //inner
+bar(x1,y1,x2,y2);
+//outtextxy(510,188,"Reset");
+outtextxy(570,226,"Apply");
+while(1)
+{
+switch(getch())
+{
+case 77:
+case 75:
+{
+if(choice==0)
+{
+x1=562;y1=226;x2=608;y2=242;
+setcolor(15);setfillstyle(1,9);bar(x1,y1,x2,y2);outtextxy(570,226,"Apply")
+;
+choice=1;x1=502;y1=226;x2=548;y2=242;
+setcolor(9);setfillstyle(1,15);bar(x1,y1,x2,y2);outtextxy(510,226,"Reset")
+;
+}
+else if (choice==1)
+{
+x1=562;y1=226;x2=608;y2=242;
+setcolor(9);setfillstyle(1,15);bar(x1,y1,x2,y2);outtextxy(570,226,"Apply")
+;
+choice=0;x1=502;y1=226;x2=548;y2=242;
+setcolor(15);setfillstyle(1,9);bar(x1,y1,x2,y2);outtextxy(510,226,"Reset")
+;
+}
+break;
+}
+case '
+':
+if(choice == 0)return(1); else return(0);
+}
+}
+}
+///////////////////////////////////////////////
+void showDtable()
+{
+setfillstyle(1,8);
+bar(140-4,280-4,640,410+4);
+setfillstyle(1,15);
+bar(140,280,634,410);
+setfillstyle(1,9);
+bar(142,282,632,302);
+setfillstyle(1,9);
+bar(142,306,632,408);
+setfillstyle(1,1);
+bar(142,306,632,326);
+setcolor(15);
+settextstyle(2,0,4);
+outtextxy(330,286,"8-QAM Data Table");
+setfillstyle(1,1);
+bar(142,306,242,408);
+setfillstyle(1,15);
+bar(242,306,244,410);
+bar(142,326,632,328);
+bar(142,346,632,348);
+bar(142,366,632,368);
+bar(142,386,632,388);
+bar(420,306,422,410);
+setcolor(15);
+setlinestyle(0,0,2);
+line(142,306,244,326);
+setcolor(15);
+settextstyle(2,0,4);
+outtextxy(189,305,"Amplitude");
+outtextxy(149,314,"Phase");
+setcolor(15);
+show_int_graph(qam.ang1,3,170,332);
+show_int_graph(qam.ang2,3,170,352);
+show_int_graph(qam.ang3,3,170,372);
+show_int_graph(qam.ang4,3,170,392);
+show_int_graph(qam.amp1,2,320,311);
+show_int_graph(qam.amp2,3,510,311);
+setcolor(1);
+outtextxy(320,332,"000");
+outtextxy(512,332,"001");
+outtextxy(320,352,"010");
+outtextxy(512,352,"011");
+outtextxy(320,372,"100");
+outtextxy(512,372,"101");
+outtextxy(320,392,"110");
+outtextxy(512,392,"111");
+setfillstyle(1,8);
+bar(560,415,620,435);
+setfillstyle(1,15); //inner
+bar(560+1,415+1,620-1,435-1);
+setfillstyle(1,9); //inner
+bar(560+2,415+2,620-2,435-2);
+setcolor(15);
+outtextxy(568,420,"Continue");
+}
+//////////////////////////////////////////////////////////////////////////
+//
+void creategraph_Dqam()
+{
+y12=yvalue2-20,x12=20,y22=yvalue2;
+int cgx1=20,cgy1=140, cgx2=500,cgy2=yvalue2;
+setcolor(4);
+setlinestyle(0,1,3);
+line(cgx1,cgy1,cgx1,cgy2);
+line(cgx1,cgy2,cgx2,cgy2);
+setcolor(14);
+setlinestyle(1,1,1);
+for(int i = cgx1+20; i<cgx2;i+=20)
+line(i,cgy1,i,cgy2);
+settextstyle(1,0,4);
+setcolor(15);
+outtextxy(x12,30,"DIGITAL SIGNAL");
+setfillstyle(1,9);
+bar(x12,70,x12+250,72);
+settextstyle(2,0,4);setcolor(15);
+outtextxy(260,460,"Press any key to continue");
+int a=30,b=100;
+for(i=0;i<=23;i++)
+{
+setcolor(15);
+graphicText(a,y22-100,bd_4qam[i]);
+setcolor(15);
+graphicText(b,400,bd_4qam[i]);
+a+=20;b+=7;
+}
+setcolor(9);
+outtextxy(40,400,"Data   = ");
+//getch();
+}
+/////////////////////////////////////////////////////
+void createDsignal_Dqam()
+{
+setcolor(2);
+int len=25;
+for (int i=0;i<len-1;i++)
+{
+if(bd_4qam[i] == '0')
+{
+dsignal4_0_Dqam(i+1);
+}
+else
+{
+dsignal4_1_Dqam(i+1);
+}
+}
+}
+//////////////////////////////////////////////////////
+void dsignal4_0_Dqam(int pos)
+{
+setcolor(2);
+setlinestyle(0,1,lineweight);
+int x=x12;x12+=20;
+if (pos == 1 || (pos != 1 && bd_4qam[pos-2] == '0'))
+line(x,y22,x+20,y22);
+else
+{
+line(x,y12,x,y22);
+line(x,y22,x+20,y22);
+}
+}
+///////////////////////////////////////////////////////
+void dsignal4_1_Dqam(int pos)
+{
+setcolor(2);
+setlinestyle(0,1,lineweight);
+int x=x12;x12+=20;
+if (pos == 1 || (pos != 1 && bd_4qam[pos-2] == '1'))
+line(x,y12,x+20,y12);
+else
+{
+line(x,y12,x,y22);
+line(x,y12,x+20,y12);
+}
+}
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////
+void calc_qam_sinewave(int phase,int amp)
+{
+float frequency;
+frequency = (2 * pi * c_hz)/qam_sr;
+for (int t = 0; t<qam_lcycle;t++)
+qam.sine_value[t] = amp * (sin((frequency*t)+ phase));
+}
+////////////////////////////////////////////////
+void qam_main()
+{
+qam.x=32;
+for (int i = 0;i<25;i+=3)
+{
+if (bd_4qam[i] == '0' && bd_4qam[i+1] == '0' && bd_4qam[i+2] == '0')
+{
+calc_qam_sinewave(qam.phase1,qam.amp1);
+create_qam_waves();
+}
+else if (bd_4qam[i] == '0' && bd_4qam[i+1] == '0' && bd_4qam[i+2] == 
+'1')
+{
+calc_qam_sinewave(qam.phase1,qam.amp2);
+create_qam_waves();
+}
+else if (bd_4qam[i] == '0' && bd_4qam[i+1] == '1' && bd_4qam[i+2] == 
+'0')
+{
+calc_qam_sinewave(qam.phase2,qam.amp1);
+create_qam_waves();
+}
+else if (bd_4qam[i] == '0' && bd_4qam[i+1] == '1' && bd_4qam[i+2] == 
+'1')
+{
+calc_qam_sinewave(qam.phase2,qam.amp2);
+create_qam_waves();
+}
+else if (bd_4qam[i] == '1' && bd_4qam[i+1] == '0' && bd_4qam[i+2] == 
+'0')
+{
+calc_qam_sinewave(qam.phase3,qam.amp1);
+create_qam_waves();
+}
+else if (bd_4qam[i] == '1' && bd_4qam[i+1] == '0' && bd_4qam[i+2] == 
+'1')
+{
+calc_qam_sinewave(qam.phase3,qam.amp2);
+create_qam_waves();
+}
+else if (bd_4qam[i] == '1' && bd_4qam[i+1] == '1' && bd_4qam[i+2] == 
+'0')
+{
+calc_qam_sinewave(qam.phase4,qam.amp1);
+create_qam_waves();
+}
+else if (bd_4qam[i] == '1' && bd_4qam[i+1] == '1' && bd_4qam[i+2] == 
+'1')
+{
+calc_qam_sinewave(qam.phase4,qam.amp2);
+create_qam_waves();
+}
+}
+}
+////////////////////////////////////////////////////
+void create_qam_waves()
+{
+int y=200,x1,y1;
+setcolor(2);
+setlinestyle(0,0,3);
+for(int i=0;i<fsk_lcycle;i++)
+{
+x1=qam.x+i;
+if(qam.sine_value[i] >= 0)
+y1=y-qam.sine_value[i];
+else
+y1=y+((-1)*qam.sine_value[i]);
+line(x1,y1,x1,y1);
+}
+qam.x=x1;
+}
+///////////////////////////////////////////////////////
+void create_graph_qam()
+{
+int csx1=30,csy1=100, csx2=620,csy2=300;
+setcolor(15);
+show_int_graph(qam.amp1,2,csx1-25,csy2-csy1-qam.amp1-5);
+show_int_graph(((-1)*qam.amp1),3,csx1-30,csy2-csy1+qam.amp1-5);
+show_int_graph(qam.amp2,2,csx1-25,csy2-csy1-qam.amp2-5);
+show_int_graph(((-1)*qam.amp2),3,csx1-30,csy2-csy1+qam.amp2-5);
+setlinestyle(0,0,1);
+line(csx1-4,csy2-csy1-qam.amp1,csx1+4,csy2-csy1-qam.amp1);
+line(csx1-4,csy2-csy1+qam.amp1,csx1+4,csy2-csy1+qam.amp1);
+line(csx1-4,csy2-csy1-qam.amp2,csx1+4,csy2-csy1-qam.amp2);
+line(csx1-4,csy2-csy1+qam.amp2,csx1+4,csy2-csy1+qam.amp2);
+setcolor(4);
+setlinestyle(0,0,3);
+line(csx1,csy1,csx1,csy2);
+line(csx1,csy2-csy1,csx2,csy2-csy1);
+setcolor(9);
+setlinestyle(1,1,1);
+for(int i = csx1+qam_lcycle; i<csx2;i+=qam_lcycle-1)
+line(i,csy1,i,csy2);
+settextstyle(2,0,4);
+outtextxy(csx1+360,csy2+10,"Frequency for 0  = ");
+setcolor(15);
+show_int_graph(c_hz,2,csx1+480,csy2+10);
+settextstyle(1,0,4);
+setcolor(15);
+outtextxy(csx1,30,"QAM");
+setfillstyle(1,9);
+bar(csx1,70,csx1+370,72);
+settextstyle(2,0,4);setcolor(15);
+outtextxy(260,468,"Press any key to continue");
+int a=54,b=csx1+166;
+for(i=0;i<=25;i+=3)
+{
+setcolor(15);
+graphicText(a,csy2-195,bd_4qam[i]);
+graphicText(a+7,csy2-195,bd_4qam[i+1]);
+graphicText(a+7+7,csy2-195,bd_4qam[i+2]);
+setcolor(15);
+graphicText(b,310,bd_4qam[i]);
+b+=7;
+graphicText(b,310,bd_4qam[i+1]);
+b+=7;
+graphicText(b,310,bd_4qam[i+2]);
+a+=ask_lcycle;b+=7;
+}
+setcolor(9);
+outtextxy(40,310,"Data      = ");
+//getch();
+}
+//////////////////////////////////////////////
+void showDtable2()
+{
+setfillstyle(1,8);
+bar(140-4-100,280-4+50,640-100,410+4+50);
+setfillstyle(1,15);
+bar(140-100,280+50,634-100,410+50);
+setfillstyle(1,9);
+bar(142-100,282+50,632-100,302+50);
+setfillstyle(1,9);
+bar(142-100,306+50,632-100,408+50);
+setfillstyle(1,1);
+bar(142-100,306+50,632-100,326+50);
+setcolor(15);
+settextstyle(2,0,4);
+outtextxy(330-100,286+50,"8-QAM Data Table");
+setfillstyle(1,1);
+bar(142-100,306+50,242-100,408+50);
+setfillstyle(1,15);
+bar(242-100,306+50,244-100,410+50);
+bar(142-100,326+50,632-100,328+50);
+bar(142-100,346+50,632-100,348+50);
+bar(142-100,366+50,632-100,368+50);
+bar(142-100,386+50,632-100,388+50);
+bar(420-100,306+50,422-100,410+50);
+setcolor(15);
+setlinestyle(0,0,2);
+line(142-100,306+50,244-100,326+50);
+setcolor(15);
+settextstyle(2,0,4);
+outtextxy(189-100,305+50,"Amplitude");
+outtextxy(149-100,314+50,"Phase");
+setcolor(15);
+show_int_graph(qam.ang1,3,170-100,332+50);
+show_int_graph(qam.ang2,3,170-100,352+50);
+show_int_graph(qam.ang3,3,170-100,372+50);
+show_int_graph(qam.ang4,3,170-100,392+50);
+show_int_graph(qam.amp1,2,320-100,311+50);
+show_int_graph(qam.amp2,3,510-100,311+50);
+setcolor(1);
+outtextxy(320-100,332+50,"000");
+outtextxy(512-100,332+50,"001");
+outtextxy(320-100,352+50,"010");
+outtextxy(512-100,352+50,"011");
+outtextxy(320-100,372+50,"100");
+outtextxy(512-100,372+50,"101");
+outtextxy(320-100,392+50,"110");
+outtextxy(512-100,392+50,"111");
+}

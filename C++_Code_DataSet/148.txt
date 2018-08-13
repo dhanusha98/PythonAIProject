@@ -1,0 +1,309 @@
+Code :
+
+	   /////////////////////////////////////////////////
+	   //  IMPLEMENTATION OF GRAPH USING MULTI-LIST   //
+	   /////////////////////////////////////////////////
+	   //     SUBMITTED TO       SIR YAHYA KHURRAM    //
+	   //     PREAPRED BY        FAWAD NAEEM          //
+	   //     ROLL NO.           BCSF03A120           //
+	   /////////////////////////////////////////////////
+
+#include<constream.h>
+
+
+template<class T>
+class Node
+{
+ friend class Graph<T>;
+  private:
+	  T data;
+	  Node<T>* vlist;
+	  Node<T>* next;
+	  int status;
+  public:
+	 Node(T val)
+	  {
+	    data=val;
+	    vlist=NULL;
+	    next=NULL;
+	  }
+};
+
+
+template<class T>
+class Graph
+{
+ private:
+	 Node<T>* head;
+ public:
+	Graph()
+	{
+	 head=NULL;
+	}
+
+   void Insert_Vertex(T val);
+   void Insert_Edge(T v_val,T e_val);
+
+   void Print_Vertices();
+   void Print_Edges(T v_val);
+
+   void Delete_Edge(T v_val,T e_val);
+   void Delete_Vertex(T val);
+   void bfs();
+};
+
+/////////////////
+//  INSERTION  //
+/////////////////
+
+template<class T>
+void Graph<T>::Insert_Vertex(T val)
+{
+ Node<T>* temp=new Node<T>(val);
+
+   if(head==NULL)
+    {
+     head=temp;
+     return;
+    }
+
+   Node<T>* t=head;
+   while(t->vlist!=NULL)
+    t=t->vlist;
+
+   t->vlist=temp;
+
+}
+
+
+template<class T>
+void Graph<T>::Insert_Edge(T v_val,T e_val)
+{
+  if(head==NULL)
+   return;
+
+  Node<T>* k=head;
+  Node<T>* t=head;
+  Node<T>* temp=new Node<T>(e_val);
+
+  while(t!=NULL)
+   {
+     if(t->data==v_val)
+      {
+	Node<T>* s=t;
+	    while(s->next!=NULL)
+	      s=s->next;
+	    s->next=temp;
+	while(k!=NULL)
+	 {
+	   if(k->data==e_val)
+	     break;
+	   k=k->vlist;
+	 }
+
+	temp->vlist=k;
+	 return;
+      }
+     t=t->vlist;
+   }
+
+
+}
+///////////////////////
+//  PRINT FUNCTIONS  //
+///////////////////////
+template<class T>
+void Graph<T>::Print_Vertices()
+{
+ Node<T>* t=head;
+   while(t!=NULL)
+    {
+      cout<<t->data<<"	";
+      t=t->vlist;
+    }
+}
+
+
+template<class T>
+void Graph<T>::Print_Edges(T v_val)
+{
+   Node<T>* t=head;
+   while(t!=NULL)
+    {
+       if(t->data==v_val)
+	{
+	  while(t->next!=NULL)
+	   {
+	    cout<<t->next->vlist->data<<"	";
+	    t=t->next;
+	   }
+	}
+       t=t->vlist;
+    }
+}
+//////////////////
+//   DELETION   //
+//////////////////
+template<class T>
+void Graph<T>::Delete_Edge(T v_val,T e_val)
+{
+  if(head==NULL)
+   return;
+
+  Node<T>* t=head;
+
+   while(t!=NULL)
+   {
+      if(t->data==v_val)
+       {
+	Node<T>* s=t;
+	t=t->next;
+	   while(t!=NULL)
+	    {
+	       if(t->data==e_val)
+		{
+		  s->next=t->next;
+		  t=NULL;
+		  t->vlist=NULL;
+		  delete t;
+		   return;
+		}
+	      s=t;
+	      t=t->next;
+	    }
+       }
+     t=t->vlist;
+   }
+}
+
+template<class T>
+void Graph<T>::Delete_Vertex(T v_val)
+{
+    if(head==NULL)
+      return;
+
+  Node<T>* e=head;
+
+    // Delete Edges in other Vertices
+
+    while(e!=NULL)
+     {
+       Delete_Edge(e->data,v_val);
+       e=e->vlist;
+     }
+
+
+   // Delete  Vertex Edges
+
+   Node<T>* t=head;
+
+    while(t!=NULL)
+     {
+	if(t->data==v_val)
+	 {
+	    Node<T>* s=t;
+	      while(s->next!=NULL)
+	       {
+		Node<T>* k=s->next;
+
+		  while(k!=NULL)
+		    k=k->next;
+
+		   k=NULL;
+		   k->vlist=NULL;
+		   delete k;
+
+		s=s->next;
+	       }
+	 }
+       t=t->vlist;
+     }
+
+    //Delete Vertex
+
+    if(head->data==v_val)
+     {
+       Node<T>* temp=head;
+       head=head->vlist;
+       temp=NULL;
+       delete temp;
+       return;
+     }
+
+
+     Node<T>* p1=head->vlist;
+     Node<T>* p2=head;
+
+	 while(p1!=NULL)
+	  {
+	    if(p1->data==v_val)
+	     {
+	      p2->vlist=p1->vlist;
+	      p1=NULL;
+	      delete p1;
+	      return;
+	     }
+	   p2=p1;
+	   p1=p1->vlist;
+	  }
+
+}
+
+//----------------MIAN FUNCTION---------------//
+void main()
+{
+clrscr();
+Graph<char> G;
+G.Insert_Vertex('A');
+G.Insert_Vertex('B');
+G.Insert_Vertex('C');
+G.Insert_Vertex('D');
+
+
+
+G.Insert_Edge('A','B');
+G.Insert_Edge('A','C');
+G.Insert_Edge('A','D');
+
+G.Insert_Edge('B','A');
+G.Insert_Edge('B','C');
+G.Insert_Edge('B','D');
+
+
+cout<<"
+
+The vertices in the Graph are:	";
+G.Print_Vertices();
+
+cout<<"
+
+Egdes of the given vertex to other vertices are:	";
+G.Print_Edges('B');
+
+G.Delete_Edge('B','C');
+
+cout<<"
+
+Egdes after deletion:	";
+G.Print_Edges('B');
+
+G.Delete_Vertex('A');
+
+cout<<"
+
+
+The vertices in the Graph After Deletion:  ";
+G.Print_Vertices();
+
+cout<<"
+
+Egdes of the given vertex to other vertices are:	";
+G.Print_Edges('B');
+
+
+getch();
+}
+
+
+       
+

@@ -1,0 +1,1038 @@
+/*	       ##############################
+	       # MAIN HEADER FILES INCLUDED #
+	       ##############################
+*/
+  #include<conio.h>
+  #include<stdio.h>
+  #include<stdlib.h>
+  #include<graphics.h>
+  #include<string.h>
+  #include<dos.h>
+  #include<ctype.h>
+
+/*	       ##############################
+	       # USER DEFINED FUNCTIOS USED #
+	       ##############################
+*/
+  void add_rec (void); //FUNCTION TO ADD NEW RECORC
+  void disp_by_name(void);//FUNCTION SEARCH THE RECORD USING NAME
+  void disp_by_clas(void);//FUNCTION SEARCH THE RECORD USING CLASS
+  void edit_rec (void);//FUNCTION TO EDIT RECORC
+  void delete_rec (void);//FUNCTION TO DELETE RECORC
+  void display_all_rec (void);//FUNCTION TO DISPLALY ALL RECORDS AT ONCE
+  void display_single_rec (void);//FUNCTION TO DISPLAY RECORDS ONE BY ONE
+  int Pass (void);        //CHCKS FOR THE ADMINISTRATOR PASSWORD
+  void splash (void);//FUNCTION SHOWS THE INTRODUCTION SCREEN
+  void search(void); //FUNCTION TO SEARCH THE RECORDS
+  void end_splash (void);//SHOWS THE CREDIT SCREEN
+  int check_user(void);    //CHECKS FOR THE GENERAL USER PASSWORD
+  void administrator(void);// THE FUNCTION CALLED WHEN ADMINSTRATOR LOGS IN
+  void user_menu(void);   //THE FUNCTION CALLED WHEN GENERAL USER LOGS IN
+  void add_user(void);//FUNCTION TO ADD NEW USER BY ADMINSTRATIOR
+  void delete_user(void);//FUNCTION TO DELETE EXISTING USER
+  void display_user(void);//FUNCTION DISPLAYS THE EXISTING USER
+
+/*	       ##############################
+	       # FUNCTION TO CONTROLL MOUSE #
+	       ##############################
+*/
+
+  int initmouse();//FUNTTION INITIALISE THE MOUSE
+  void showmouseptr();//FUNTTION SHOWS THE MOUSE POINTER ON SCREEN
+  int restrictmouseptr(int x1,int y1,int x2,int y2);//FUNCTION KEEPS THE MOUSER POINTER ON THE VISIBLE SCREEN
+  void getmousepos(int *button,int *x,int *y);//FUNTTION STATES THE MOUSE POINTER POSITION
+
+/*	       ###############################################
+	       # THE STRUCTURES AND FILE POINTER DEFINITIONS #
+	       ###############################################
+*/
+
+  union REGS i,o;
+
+   struct user //STRUCTURE FOR USERNAME AND PASSWORD
+   {
+     char username[12],userpswd[12];
+   };
+
+   FILE *usrptr; //USER FILE POINTER
+   struct user usrrec;
+
+ struct student //STRUCTURE FOR STUDENT INFORMATION
+  {
+     int rno;
+     char name[50],clas[50],f_name[50],ph[8],adrs[50],date[15];
+     char gender;
+  };
+
+  student rec;                           //Global variable of student rec
+  FILE *fptr;                            //Global variable for file
+  int x,y,button;
+  char name[12];
+
+/*
+#################################################################################
+# THE MAIN FUNCTION THAT HANDLES ALL THE USER FUNCTIONS THE EXUTION STARTSHERE #
+#################################################################################
+*/
+
+  void main(void)
+  {
+
+	fptr=fopen("student.dat","rb+");
+	if (fptr==NULL)
+	{
+		fptr=fopen("student.dat","wb+");
+		if (fptr==NULL)
+		{
+			printf("
+ Can't create file");
+			getch();
+			exit(1);
+		}
+  }
+
+      if (initmouse()==0)
+	{
+	closegraph();
+	restorecrtmode();
+	printf("
+Mouse driver not loaded");
+	exit(1);
+	}
+      usrptr=fopen("userfile.dat","rb+");
+     if(usrptr==NULL)
+      {
+       usrptr=fopen("userfile.dat","wb+");
+       if(usrptr==NULL)
+       {
+	printf("SORRY CANNOT CREATE USER FILE");
+	return;
+       }// end if
+      }// end if
+	splash();
+	int gd=DETECT,gm,errorcode,xc,yc;
+	initgraph(&gd,&gm,"");//Switch to Graphic mode
+	errorcode = graphresult();
+if (errorcode != grOk)//Returns error if Graphic mode note started with error no.
+	{
+	printf("Graphics error: %s
+", grapherrormsg(errorcode));
+	printf("Press any key to halt:");
+	getch();
+	exit(1);
+	}
+   setbkcolor(4);
+   int menu=13;
+   char op;
+   while(menu==13)
+   {
+   cleardevice();
+   showmouseptr();
+   rectangle(1,1,630,470);
+   rectangle(6,6,626,466);
+   rectangle(70,55,280,80);
+	gotoxy(10,5);
+	printf("1-->LOGIN AS ADMINISTRATOR");
+   rectangle(70,90,280,115);
+	gotoxy(10,7);
+	printf("2-->LOGIN AS USER");
+	rectangle(70,125,280,150);
+	gotoxy(10,9);
+	printf("3-->EXIT");
+while(!kbhit())
+	{
+	showmouseptr();
+	getmousepos(&button,&xc,&yc);
+	if (((button & 1)==1)&&(xc>70&&xc<280)&&(yc>55&&yc<80))
+	{
+	administrator();
+	cleardevice();
+	}
+	if (((button & 1)==1)&&(xc>70&&xc<280)&&(yc>90&&yc<115))
+	{
+	user_menu();
+	cleardevice();
+	}
+	if (((button & 1)==1)&&(xc>70&&xc<280)&&(yc>125&&yc<150))
+	{ end_splash();cleardevice();exit(0);
+	}
+	}
+   gotoxy(10,11);
+   printf("ENTER YOUR CHOICE (1 TO 3) : ");
+   fflush(stdin);
+   op=getch();
+   switch(op)
+   {
+     case '1': administrator(); break;
+     case '2': user_menu();     break;
+     case '3': end_splash();    break;
+     default: printf("Plesae Enter Only Listed Options");
+   }
+   }//end while
+  }
+
+/*       ###########################################################
+	 # THE FUNCTION THAT HANDLES ADMINISTRATIOR LOGIN PASSWORD #
+	 ###########################################################
+*/
+
+  void administrator(void)
+  {
+	char ch;
+	int c=Pass(),xc,yc;
+	if(c==0)
+	return;
+	int menu=13;
+	while (menu==13)
+		{
+			cleardevice();
+			for (x=68,y=3;x<=40,y<=31;x--,y++)
+			{
+			gotoxy(y,3);printf("  DISPLAY ");
+			gotoxy(x,3);printf(" MAIN MENU ");
+			delay(15);
+			}
+	showmouseptr();
+	rectangle(1,1,630,470);
+	rectangle(6,6,626,466);
+	rectangle(160,55,400,80);gotoxy(22,5);printf("1-->ADD RECORD");
+	rectangle(160,90,400,115);gotoxy(22,7);printf("2-->EDIT RECORD");
+	rectangle(160,120,400,145);gotoxy(22,9);printf("3-->DISPLAY SINGLE RECORD");
+	rectangle(160,155,400,180);gotoxy(22,11);printf("4-->DISPLAY ALL RECORDS");
+	rectangle(160,185,400,210);gotoxy(22,13);printf("5-->DELETE RECORD");
+	rectangle(160,215,400,240);gotoxy(22,15);printf("6-->ADD USER");
+	rectangle(160,245,400,280);gotoxy(22,17);printf("7-->DISPLAY ALL USERS");
+	rectangle(160,285,400,310);gotoxy(22,19);printf("8-->DELETE USER");
+	rectangle(160,315,400,345);gotoxy(22,21);printf("9-->SEARCH");
+	rectangle(160,350,400,380);gotoxy(22,23);printf("0-->LOG OFF ADMINISTRATOR");
+	gotoxy(20,25);printf(" Enter your Choice <0 TO 9> : ");
+		  while (!kbhit())
+		  {
+		  showmouseptr();
+		  getmousepos(&button,&xc,&yc);
+		  if (((button & 1)==1)&&(xc>160&&xc<400)&&(yc>55&&yc<80))
+		  {
+		  add_rec();break;
+		  }
+		  if (((button & 1)==1)&&(xc>160&&xc<400)&&(yc>90&&yc<115))
+		  {
+		  edit_rec();break;
+		  }
+		  if (((button & 1)==1)&&(xc>160&&xc<400)&&(yc>120&&yc<145))
+		  {
+		  display_single_rec();break;
+		  }
+		  if (((button & 1)==1)&&(xc>160&&xc<400)&&(yc>155&&yc<180))
+		  {
+		  display_all_rec();break;
+		  }
+		  if (((button & 1)==1)&&(xc>160&&xc<400)&&(yc>185&&yc<210))
+		  {
+		  delete_rec();break;
+		  }
+		  if (((button & 1)==1)&&(xc>160&&xc<400)&&(yc>215&&yc<240))
+		  {
+		  add_user();break;
+		  }
+		  if (((button & 1)==1)&&(xc>160&&xc<400)&&(yc>245&&yc<280))
+		  {
+		  display_user();break;
+		  }
+		  if (((button & 1)==1)&&(xc>160&&xc<400)&&(yc>285&&yc<310))
+		  {
+		  delete_user();break;
+		  }
+		  if (((button & 1)==1)&&(xc>160&&xc<400)&&(yc>315&&yc<345))
+		  {
+		  search();break;
+		  }
+		  if (((button & 1)==1)&&(xc>160&&xc<400)&&(yc>350&&yc<380))
+		  {
+		  return;
+		  }
+		  }
+		  ch=getch();
+		  switch(ch)
+		  {
+			case '1':add_rec(); break;
+			case '2':edit_rec(); break;
+			case '3':display_single_rec(); break;
+			case '4':display_all_rec(); break;
+			case '5':delete_rec(); break;
+			case '6':add_user(); break;
+			case '7':display_user(); break;
+			case '8':delete_user(); break;
+			case '9':search();break;
+			case '0':return;
+			default:printf("Enter A Valid Options");
+		  }   // end switches
+
+		}// end while
+
+  }// end body of administrator
+
+/*       #########################################################
+	 # 	  THE FUNCTION THAT HANDLES ALL SEARCHINGS	 #
+	 #########################################################
+*/
+
+void search(void)
+  {
+	char ch;
+	int xc,yc;
+	int menu=13;
+	while (menu==13)
+		{
+			cleardevice();
+			for (x=68,y=3;x<=40,y<=31;x--,y++)
+			{
+			gotoxy(y,3);printf("  DISPLAY ");
+			gotoxy(x,3);printf(" MAIN MENU ");
+			delay(15);
+			}
+	showmouseptr();
+	rectangle(160,55,400,80);gotoxy(22,5);printf("1-->SEARCH BY NAME");
+	rectangle(160,90,400,115);gotoxy(22,7);printf("2-->SEARCH BY CLASS");
+	rectangle(160,120,400,145);gotoxy(22,9);printf("3-->SEARCH BY G.R.NO.");
+	rectangle(160,155,400,180);gotoxy(22,11);printf("4-->EXIT");
+	gotoxy(22,23);printf(" Enter your Choice <1 TO 4> : ");
+		  while (!kbhit())
+		  {
+		  showmouseptr();
+		  getmousepos(&button,&xc,&yc);
+		  if (((button & 1)==1)&&(xc>160&&xc<400)&&(yc>55&&yc<80))
+		  {
+		  disp_by_name();break;
+		  }
+		  if (((button & 1)==1)&&(xc>160&&xc<400)&&(yc>90&&yc<115))
+		  {
+		  disp_by_clas();break;
+		  }
+		  if (((button & 1)==1)&&(xc>160&&xc<400)&&(yc>120&&yc<145))
+		  {
+		  display_single_rec();break;
+		  }
+		  if (((button & 1)==1)&&(xc>160&&xc<400)&&(yc>155&&yc<180))
+		  {
+		  return;
+		  }
+		  }
+		  ch=getch();
+		  switch(ch)
+		  {
+			case '1':disp_by_name(); break;
+			case '2':disp_by_clas(); break;
+			case '3':display_single_rec(); break;
+			case '4':return;
+
+		  }   // end switches
+
+		}// end while
+
+  }// end body of administrator
+
+/*       #########################################################
+	 # THE FUNCTION THAT SEARCHES USING THE STUDENT NAME     #
+	 #########################################################
+*/
+
+void disp_by_name(void)
+  {
+  int found=0;
+  char t[10];
+  cleardevice();
+  for (x=60,y=3;x<=30,y<=31;x--,y++)
+	{
+	gotoxy(y,3);printf(" DISPLAY ");
+	gotoxy(x,3);printf(" SINGLE RECORD MENU ");
+	delay(15);
+	}
+
+  gotoxy(20,6);printf("ENTER NAME FOR SEARCHINMG > ");
+  gets(t);
+  rewind(fptr);
+
+  while (fread(&rec,sizeof(rec),1,fptr)==1)
+  {
+	if (strcmp(rec.name,t)==0)
+	{
+		cleardevice();
+		for (x=60,y=3;x<=30,y<=31;x--,y++)
+		{
+		gotoxy(y,3);printf(" DISPLAYING RECORDS ");
+		gotoxy(x,3);printf(" USING NAME ");
+		delay(15);
+		}
+		found=1;
+		gotoxy(10,7); printf(" NAME : %s ",rec.name);
+		gotoxy(50,7); printf(" G.R.NO. : %d",rec.rno);
+		gotoxy(10,9); printf(" FATHER'S NAME : %s",rec.f_name);
+		gotoxy(10,11);printf(" CLASS : %s",rec.clas);
+		gotoxy(50,11);printf(" GENDER : %c",rec.gender);
+		gotoxy(10,13);printf(" RESIDENTIAL ADDRESS : %s",rec.adrs);
+		gotoxy(10,15);printf(" PHONE : %s",rec.ph);
+		gotoxy(10,17);printf(" DATE OF ADMISSION : %s",rec.date);
+		gotoxy(17,22);printf("PREES ANY KEY TO CONTINUE");
+		getch();
+		cleardevice();
+	}
+
+  }
+  if (found==0)
+  {
+	gotoxy(15,22);printf("RECORD NOT FOUND");
+	gotoxy(15,23);printf("PRESS ANY KEY TO CONTINUE");
+	getch();
+	cleardevice();
+  }
+
+  }
+
+/*       #########################################################
+	 # THE FUNCTION THAT SEARCHES USING THE CLASS OF STUDENT #
+	 #########################################################
+*/
+
+   void disp_by_clas(void)
+  {
+  int found=0;
+  char t[5];
+  cleardevice();
+
+	for (x=60,y=3;x<=30,y<=31;x--,y++)
+	{
+	gotoxy(y,3);printf(" DISPLAY ");
+	gotoxy(x,3);printf(" SINGLE RECORD MENU ");
+	delay(15);
+	}
+
+  gotoxy(20,6);printf("ENTER G.R.NO. FOR SEARCHING   > ");
+  gets(t);
+  rewind(fptr);
+
+  while (fread(&rec,sizeof(rec),1,fptr)==1)
+  {
+	if (strcmp(rec.clas,t)==0)
+	{
+		cleardevice();
+		for (x=60,y=3;x<=30,y<=31;x--,y++)
+		{
+		gotoxy(y,3);printf(" DISPLAY ");
+		gotoxy(x,3);printf(" SINGLE RECORD MENU ");
+		delay(15);
+		}
+		found=1;
+		gotoxy(10,7); printf(" NAME : %s ",rec.name);
+		gotoxy(50,7); printf(" G.R.NO. : %d",rec.rno);
+		gotoxy(10,9); printf(" FATHER'S NAME : %s",rec.f_name);
+		gotoxy(10,11);printf(" CLASS : %s",rec.clas);
+		gotoxy(50,11);printf(" GENDER : %c",rec.gender);
+		gotoxy(10,13);printf(" RESIDENTIAL ADDRESS : %s",rec.adrs);
+		gotoxy(10,15);printf(" PHONE : %s",rec.ph);
+		gotoxy(10,17);printf(" DATE OF ADMISSION : %s",rec.date);
+
+		gotoxy(17,22);printf("PREES ANY KEY TO CONTINUE");
+		getch();
+		cleardevice();
+	}
+
+  }
+  if (found==0)
+  {
+	gotoxy(15,22);printf("RECORD NOT FOUND");
+	gotoxy(15,23);printf("PRESS ANY KEY TO CONTINUE");
+	getch();
+	cleardevice();
+  }
+
+  }
+
+
+
+/*       #########################################################
+	 # THE FUNCTION THAT HANDLES ADDITION OF RECORDS	 #
+	 #########################################################
+*/
+
+  void add_rec(void)                //user define function
+  {
+	char t[5],ch;
+	cleardevice();
+	for (x=68,y=3;x<=38,y<=31;x--,y++)
+	{
+	gotoxy(y,3);printf("DISPLAY ");
+	gotoxy(x,3);printf("  ADD RECORD MENU ");
+	delay(15);
+	}
+	char srec;
+	rewind (fptr);
+	gotoxy(10,5); printf("ENTER G.R.NO. (1-1500)                   > ");
+gets(t);
+	srec=atoi(t);
+	while (fread(&rec,sizeof(rec),1,fptr)==1);
+	{
+	 if (srec==rec.rno)
+	 {
+	 gotoxy(5,23);printf("Sorry! This Record Already Exist");
+	 gotoxy(5,24);printf("PRESS ANY KEY TO CONTINUE");
+	 getch();
+	 return;
+	 }// end if
+	}// end while
+	rec.rno=atoi(t);
+	gotoxy(10,7);
+	printf("Enter Name                       > ");
+	gets(rec.name);
+	gotoxy(10,9); printf("ENTER FATHER'S NAME              > ");
+	gets(rec.f_name);
+	gotoxy(10,11);printf("ENTER GENDER(M/F)                > ");
+	rec.gender=getch();
+	if((rec.gender=='M'||rec.gender=='m')||(rec.gender=='F'||rec.gender=='f'))printf("%c",rec.gender);
+	gotoxy(10,13);printf("ENTER CLASS (1 to 12)                      > ");
+	gets(rec.clas);
+	gotoxy(10,15);printf("ENTER ADDRESS                    > ");
+	gets(rec.adrs);
+	gotoxy(10,17);printf("ENTER PHONE # (No. only )                    > ");
+	gets(rec.ph);
+	gotoxy(10,19);printf("ENTER DATE OF ADMISSION(DD/MM/YY)> ");
+	gets(rec.date);
+	gotoxy(15,21);printf("Do You Want To Save This Record (Y/N) : ");
+	ch=getch();
+	if(ch=='Y' || ch=='y')
+	{
+		fwrite(&rec,sizeof(rec),1,fptr);
+		gotoxy(15,22);printf("RECORD SAVED ");
+		gotoxy(15,23);printf("PRESS ANY KEY TO CONTINUE");
+		getch();
+		cleardevice();
+	}
+
+  }
+
+/*       #########################################################
+	 # THE FUNCTION THAT HANDLES EDITING OF RECORDS		 #
+	 #########################################################
+*/
+
+  void edit_rec(void)
+  {
+    int Erec=0, found=0;
+    char t[50],ch;
+    long int s;
+    cleardevice();
+    for(x=60,y=3;x>=40,y<=25;x--,y++)
+    {
+      cleardevice();
+      gotoxy(y,2); printf("DISPLAY EDIT");
+      gotoxy(x,2); printf("RECORD MENU");
+      delay(50);
+    }// end for loop
+    gotoxy(10,5); printf("ENTER G.R.NO. FOR EDITING : ");
+    gets(t); Erec=atoi(t);
+    rewind(fptr);
+
+    while(fread(&rec,sizeof(rec),1,fptr)==1)
+    {
+      if(rec.rno==Erec)
+      {
+       cleardevice();
+       found=1;
+       for(x=60,y=3;x>=40,y<=25;x--,y++)
+       {
+	 cleardevice();
+	 gotoxy(y,2); printf("DISPLAY EDIT");
+	 gotoxy(x,2); printf("RECORD MENU");
+	 delay(50);
+       }// end for loop
+       gotoxy(10,7); printf("NAME : %s ",rec.name);
+       gotoxy(50,7); printf("G.R.NO. : %d",rec.rno);
+       gotoxy(10,9); printf("FATHER'S NAME : %s",rec.f_name);
+       gotoxy(10,11);printf("CLASS : %s",rec.clas);
+       gotoxy(50,11);printf("GENDER : %c",rec.gender);
+       gotoxy(10,13);printf("RESIDENTIAL ADDRESS : %s",rec.adrs);
+       gotoxy(10,15);printf("PHONE : %s",rec.ph);
+       gotoxy(10,17);printf("DATE OF ADMISSION : %s",rec.date);
+       gotoxy(15,21);printf("DO YOU WANT TO EDIT HIS RECORD (Y/N) : ");
+
+       ch=getch();
+       if(ch=='y'||ch=='Y')
+       {
+	 cleardevice();
+	 for(x=60,y=3;x>=40,y<=25;x--,y++)
+	  {
+	    cleardevice();
+	    gotoxy(y,2); printf("DISPLAY EDIT");
+	    gotoxy(x,2); printf("RECORD MENU");
+	    delay(50);
+	  }// end for loop
+	char temp[4];
+	gotoxy(10,5);printf("ENTER G.R.NO.                     > ");
+	gets(temp);	rec.rno=atoi(temp);
+	gotoxy(10,7); printf("Enter Name                       > ");
+	gets(rec.name);
+	gotoxy(10,9); printf("ENTER FATHER'S NAME              > ");
+	gets(rec.f_name);
+	gotoxy(10,11);printf("ENTER GENDER(M/F)                > ");
+	rec.gender=getche();
+	gotoxy(10,13);printf("Enter Class                      > ");
+	gets(rec.clas);
+	gotoxy(10,15);printf("ENTER ADDRESS                    > ");
+	gets(rec.adrs);
+	gotoxy(10,17);printf("ENTER PHONE #                    > ");
+	gets(rec.ph);
+	gotoxy(10,19);printf("ENTER DATE OF ADMISSION(DD/MM/YY)> ");
+	gets(rec.date);
+
+	s=sizeof(rec);    //finding the size of rec
+	fseek(fptr,-s,SEEK_CUR); //setting pointer in file1
+	fwrite(&rec,sizeof(rec),1,fptr);
+	gotoxy(15,21); printf("RECORD SAVED");
+	gotoxy(15,23); printf("PRESS ANY KEY TO CONTINUE");
+	getch();
+       }//end if
+      }//end if
+    }//end while
+    if(found==0)
+    {
+      gotoxy(15,21); printf("NO RECORD FOUND");
+      gotoxy(15,22); printf("PRESS ANY KEY TO CONTINUE");
+      getch();
+    }
+    }//end body of edit user
+
+
+
+
+/*       #########################################################
+	 # THE FUNCTION THAT DISPLAYS SINGLE RECORD		 #
+	 #########################################################
+*/
+
+  void display_single_rec(void)
+  {
+  int srec=0,found=0;
+  char t[5];
+  cleardevice();
+
+	for (x=60,y=3;x<=30,y<=31;x--,y++)
+	{
+	gotoxy(y,3);printf(" DISPLAY ");
+	gotoxy(x,3);printf(" SINGLE RECORD MENU ");
+	delay(15);
+	}
+
+  gotoxy(20,6);printf("ENTER G.R.NO. FOR SEARCHING   > ");
+  gets(t);srec=atoi(t);
+  rewind(fptr);
+
+  while (fread(&rec,sizeof(rec),1,fptr)==1)
+  {
+	if (rec.rno==srec)
+	{
+		cleardevice();
+		for (x=60,y=3;x<=30,y<=31;x--,y++)
+		{
+		gotoxy(y,3);printf(" DISPLAY ");
+		gotoxy(x,3);printf(" SINGLE RECORD MENU ");
+		delay(15);
+		}
+		found=1;
+		gotoxy(10,7); printf(" NAME : %s ",rec.name);
+		gotoxy(50,7); printf(" G.R.NO. : %d",rec.rno);
+		gotoxy(10,9); printf(" FATHER'S NAME : %s",rec.f_name);
+		gotoxy(10,11);printf(" CLASS : %s",rec.clas);
+		gotoxy(50,11);printf(" GENDER : %c",rec.gender);
+		gotoxy(10,13);printf(" RESIDENTIAL ADDRESS : %s",rec.adrs);
+		gotoxy(10,15);printf(" PHONE : %s",rec.ph);
+		gotoxy(10,17);printf(" DATE OF ADMISSION : %s",rec.date);
+
+		gotoxy(17,22);printf("PREES ANY KEY TO CONTINUE");
+		getch();
+		cleardevice();
+	}
+
+  }
+  if (found==0)
+  {
+	gotoxy(15,22);printf("RECORD NOT FOUND");
+	gotoxy(15,23);printf("PRESS ANY KEY TO CONTINUE");
+	getch();
+	cleardevice();
+  }
+
+  }
+
+/*       ###########################################################
+	 # THE FUNCTION THAT DISPLAYS ALL THE RECORDS AT ONCE 	   #
+	 ###########################################################
+*/
+
+  void display_all_rec(void)
+  {
+   rewind(fptr);
+  while(fread(&rec,sizeof(rec),1,fptr)==1)
+  {
+  cleardevice();
+
+  for (x=68,y=3;x<=38,y<=31;x--,y++)
+	{
+	  gotoxy(y,3);printf("  DISPLAY ");
+	  gotoxy(x,3);printf(" All RECORD MENU ");
+	  delay(15);
+	}
+
+	gotoxy(10,7);printf ("NAME : %s ",rec.name);
+	gotoxy(50,7);printf ("G.R.NO. : %d",rec.rno);
+	gotoxy(10,9);printf("FATHER'S NAME : %s",rec.f_name);
+	gotoxy(10,11);printf("CLASS : %s",rec.clas);
+	gotoxy(50,11);printf("GENDER : %c",rec.gender);
+	gotoxy(10,13);printf("RESIDENTIAL ADDRESS : %s",rec.adrs);
+	gotoxy(10,15);printf("PHONE : %s",rec.ph);
+	gotoxy(10,17);printf("DATE OF ADMISSION : %s",rec.date);
+	gotoxy(17,22);printf("PREES ANY KEY TO CONTINUE");
+	getch();
+  }  //END WHILE
+
+  }// END BODY OF DISPLAY ALL RECORDS
+
+/*       #########################################################
+	 # THE FUNCTION THAT HANDLES DELETION OF RECORDS	 #
+	 #########################################################
+*/
+
+ void delete_rec(void)
+ {
+ cleardevice();
+ int DRec=0,a,found=0;
+ char t[50],ch;
+ FILE *temp;
+ temp=fopen("temp.dat","wb+");
+
+ if (temp==NULL)
+	{
+	printf("
+ Can't create File ");
+	getch();
+	exit(1);
+	}
+cleardevice();
+	for (x=68,y=3;x<=38,y<=31;x--,y++)
+	{
+	  gotoxy(y,3);printf("  DISPLAY ");
+	  gotoxy(x,3);printf(" DEL RECORD MENU ");
+	  delay(15);
+	}
+
+	gotoxy(5,5);printf("Enter Roll No For Deletion....>=");
+	gets(t);DRec=atoi(t);
+	rewind(fptr);
+ while(fread(&rec,sizeof(rec),1,fptr)==1)
+ {
+ if (rec.rno==DRec)               //checking equality
+ {
+cleardevice();
+
+	for (x=68,y=3;x<=38,y<=31;x--,y++)
+	{
+	gotoxy(y,3);printf("  DISPLAY ");
+	gotoxy(x,3);printf(" DEL RECORD MENU ");
+	delay(15);
+	}
+
+ found=1;
+	gotoxy(10,7);printf ("NAME : %s ",rec.name);
+	gotoxy(50,7);printf ("G.R.NO. : %d",rec.rno);
+	gotoxy(10,9);printf("FATHER'S NAME : %s",rec.f_name);
+	gotoxy(10,11);printf("CLASS : %s",rec.clas);
+	gotoxy(50,11);printf("GENDER : %c",rec.gender);
+	gotoxy(10,13);printf("RESIDENTIAL ADDRESS : %s",rec.adrs);
+	gotoxy(10,15);printf("PHONE : %s",rec.ph);
+	gotoxy(10,17);printf("DATE OF ADMISSION : %s",rec.date);
+	}
+	else
+	{
+	fwrite(&rec,sizeof(rec),1,temp);
+	}
+	}
+
+ if (found==0)
+ {
+  gotoxy(50,22);printf("SORRY NO RECORD FOUNFD");
+  gotoxy(50,23);printf("Press Any Key to Continue");
+  getch();
+  cleardevice();
+ }
+  else
+ {
+  gotoxy(15,23);printf("DO U WANT TO DELETE THIS RECORD.....Y/N");
+  ch=getche();
+ if (ch=='y' || ch=='Y')
+ {
+  fcloseall();                                  //Closing All Files
+ remove("student.dat");
+ rename("temp.dat","student.dat");
+ fptr=fopen("student.dat","rb+");               //Again opening Files
+ if (fptr==NULL)
+ {
+  fptr=fopen("student.dat","wb+");
+ if (fptr==NULL)
+ {
+  printf("
+ cant create file");
+  getch();
+ }
+ }
+ }
+ }
+}
+
+/*       #########################################################
+	 # THE FUNCTION THAT HANDLES & CHECKS THE PASSWORD	 #
+	 #########################################################
+*/
+
+  int Pass (void)             //user define Function
+  {
+  int c=1;        //return variable
+  char p[1],res[7]={'
+'};
+  cleardevice();
+  gotoxy(28,12);printf("Enter Your Password....>=");
+  for (int a=0;(p[0]=getch())!='
+';a++)
+  {
+  if (p[0]!=8)
+  {
+  setcolor(15);
+  res[a]=p[0];
+  outtextxy(420+(a*10),180,"*");
+  }
+  else
+  while (p[0]==8)
+  {
+  setcolor(1);
+  a--;
+  if (a<0)break;
+  outtextxy(420+(a*10),180,"?");
+  if (p[0]!=8)
+  break;
+  }
+  }
+  if ((strcmp(res,"ss"))==0)
+  {
+  cleardevice();
+  int x;
+  gotoxy(17,10);
+  printf("PLEASE WAIT FOR A WHILE!! LOADING IS IN PROGRESS...");
+  for(x=15;x<60;x++)
+  {
+  textcolor(4);
+  gotoxy(x,14);printf("?");
+  delay(5);
+  }
+  }
+  else
+  {
+   gotoxy(28,14);printf("INCORRECT PASSWORD");
+   gotoxy(28,15);printf("PRESS ANY KEY TO CONTINUE");
+   getch();
+   c=0;
+   return(c);
+  }
+  return(c);
+  }
+
+/*       #########################################################
+	 # THE FUNCTION THAT HANDLES GENERAL USER MENU	 	 #
+	 #########################################################
+*/
+
+void user_menu(void)
+ {
+  cleardevice();
+  int check=check_user(); //variable check confirms the existance of user
+  if(check!=0)
+   {
+     gotoxy(25,14); printf("INVALID USER");
+     gotoxy(25,16); printf("PRESS ANY KEY TO CONTINUE");
+     getch();
+     return;
+   }
+  int menu=13;
+  while(menu==13)
+  {
+   cleardevice();
+   rewind(fptr);
+   char op;
+   gotoxy(17,2);   printf("USER MENU");
+   gotoxy(17,3);   printf("---------");
+   gotoxy(13,5);   printf("1-->DISPLAY SINGLE RECORD");
+   gotoxy(13,7);   printf("2-->DISPLAY ALL RECORDS");
+   gotoxy(13,9);   printf("3-->LOG OFF %s",name);
+   gotoxy(13,11);   printf("ENTER YOUR CHOICE <1 TO 3> : ");
+   op=getch();
+   switch(op)
+   {
+     case '1': display_single_rec();  break;
+     case '2': display_all_rec();     break;
+     case '3': cleardevice(); return;
+   } //end switch cases
+   }//end while
+}//end body of user_menu
+
+
+/*       #########################################################
+	 # THE FUNCTION THAT HANDLES ADDITION OF USERS	 	 #
+	 #########################################################
+*/
+
+void add_user(void)
+    {
+      cleardevice();
+      rewind(usrptr);
+      char confirm;
+      gotoxy(25,2);  printf("ADD USER");
+      gotoxy(25,3);  printf("--------");
+      gotoxy(5,5);  printf("ENTER USER NAME : "); gets(name);
+      strupr(name);       // convert string to upper case
+      char *str=name;
+      while(fread(&usrrec,sizeof(usrrec),1,usrptr)==1)
+      {
+	char *s1=name,*s2=usrrec.username;
+	int check=strcmp(s1,s2);
+	if (check==0)
+	{
+	  gotoxy(5,7);  printf("USER ALREADY EXIST");
+	  gotoxy(5,9);  printf("PRESS ANY KEY TO CONTINUE");
+	  getch();
+	  cleardevice();
+	  return;
+	}//end if
+      }//end while
+
+      strcpy(usrrec.username, str);
+      gotoxy(5,7); printf("ENTER PASSWORD : "); gets(usrrec.userpswd);
+      gotoxy(5,9); printf("WISH TO SAVE USER (Y/N) : ");
+      confirm=getche();
+      if((confirm=='y')||(confirm=='Y'))
+      {
+       fwrite(&usrrec,sizeof(usrrec),1,usrptr);
+       gotoxy(5,11); printf("USER SAVED");
+       gotoxy(5,13); printf("PRESS ANY KEY TO CONTINUE");
+       getch();
+      }//end if
+     cleardevice();
+     rewind(usrptr);
+    } //end body of adduser
+
+/*       ##########################################################
+	 # THE FUNCTION THAT DISPLAYS THE USER OF THE SYSTEM 	  #
+	 ##########################################################
+*/
+
+    void display_user(void)
+    {
+     rewind(usrptr);
+     cleardevice();
+     gotoxy(25,2);  printf("DISPLAY OF USERS");
+     gotoxy(25,4);  printf("----------------");
+
+     while(fread(&usrrec,sizeof(usrrec),1,usrptr)==1)
+      {
+       gotoxy(10,5);  printf("USER NAME : %s",usrrec.username);
+       gotoxy(10,7);  printf("PASSWORD  : %s",usrrec.userpswd);
+       gotoxy(10,9);  printf("PRESS ANY KEY TO CONTINUE");
+       getch();
+      }//end while
+     cleardevice();
+     rewind(usrptr);
+     }//end body of displayuser
+
+/*       #########################################################
+	 # THE FUNCTION THAT HANDLES DELETION OF USER		 #
+	 #########################################################
+*/
+
+   void delete_user(void)
+   {
+     rewind(usrptr);
+     cleardevice();
+     int a,check,found=1;
+     char confirm;
+     FILE *temp1;
+     temp1=fopen("temp1.dat","wb+");
+     if (temp1==NULL)
+	{
+	   printf("
+ ERROR IN DELETING THE RECORD");
+	   getch();
+	   return;
+	}
+     gotoxy(25,2);
+     printf("DELETE USER");
+     gotoxy(25,3);
+     printf("-----------");
+     gotoxy(10,5);
+     printf("ENTER USER NAME FOR DELETION : ");
+     gets(name);
+     strupr(name);
+     rewind(usrptr);
+     while(fread(&usrrec,sizeof(usrrec),1,usrptr)==1)
+     {
+       char *s1=name,*s2=usrrec.username;
+       int check=strcmp(s1,s2);
+       if(check==0)
+       {
+	 gotoxy(10,7);  printf("ARE YOU SURE YOU WANT TO DELETE (Y/N) : ");
+	 found=0;
+       } // end if
+       else
+       {
+	fwrite(&usrrec,sizeof(usrrec),1,temp1);
+       }//end else
+     }//end while
+
+       if(found==0)
+       {
+	 confirm = getch();
+	 if((confirm=='y')||(confirm=='Y'))
+	 {
+	   fcloseall();     //close all files
+	   remove("userfile.dat");
+	   rename("temp1.dat","userfile.dat");
+	   gotoxy(10,9);  printf("USER DELETED");
+	   gotoxy(10,11); printf("PRESS ANY KEY TO CONTINUE");
+	   usrptr=fopen("userfile.dat","rb+");
+	   getch();
+	   cleardevice();
+	 }//end if
+       }//end if
+       else
+       {
+	 gotoxy(10,7);  printf("NO RECORD FOUND");
+	 gotoxy(10,9);  printf("PRESS ANY KEY TO CONTINUE");
+	 fclose(temp1);
+	 remove("temp1.dat");
+	 getch();
+	 cleardevice();
+       }//end else
+       rewind(usrptr);
+       }
+      // end body of deleteuser
+
+
+/*       
+################################################################
+# THE FUNCTION THAT HANDLES GENERAL USER LOGIN & PASSWORD      #
+################################################################
+*/
+
+   int check_user(void)
+      {
+       int i=0,returnvar=1,checkname,checkpswd;
+       gotoxy(25,10); printf("ENTER USER NAME : ");
+       gets(name);
+       strupr(name);
+       gotoxy(25,12); printf("ENTER PASSWORD  : "); //ACCEPTS THE PASSWORD
+       char ch=NULL;
+       char pswd[12]={'

@@ -1,0 +1,176 @@
+Code :
+#include<iostream>
+using namespace std;
+class Node
+{
+  public:
+    int data;
+    Node *next;
+    Node *prev;
+    Node()
+    {
+      data=0;
+      next=prev=NULL;
+    }
+};
+class Node1
+{
+    public:
+      int data;
+      Node1 *next;
+      Node1 *prev;
+      Node1()
+      {
+         data=0;
+         next=prev=NULL;
+      }
+};
+class Node2
+{
+   public:
+     int data;
+     Node2 *next;
+     Node2 *prev;
+     Node2()
+     {
+         data=0;
+         next=prev=NULL;
+     }
+};
+class DoublyLinkedList
+{
+    private:
+       Node *headNode, *tailnode;
+       Node1 *headNode1, *tailNode1;
+       Node2 *headNode2, *tailNode2;
+    public:
+          DoublyLinkedList()
+           {
+              headNode=tailNode=NULL;
+              headNode1=tailNode1=NULL;
+              headNode2=tailNode2=NULL;
+           }
+         void Insert();//Insert data into the two lists
+         void Merge() ;//Merging two lists into one
+         void Display();//Display only the merged list
+};
+void DoublyLinkedList::Insert()
+{
+    char option;
+    //This section inserts elements into the nodes of the first list
+    do
+    {
+      Node *newnode = new Node();
+      cin>>newnode->data;
+      newnode->next=NULL;
+      newnode->prev=NULL;
+      if(headNode==NULL)
+      {
+        headNode= tailNode=newnode;
+      }
+      else
+      {
+        Node *curr = headNode;
+        while(curr->next!=NULL)
+         {
+           curr=curr->next;
+         }
+         curr->next=tailNode=newnode;
+         newnode->prev=curr;
+       }
+       cout<<"Enter y to continue adding data into the first list :";
+       cin>>option;
+    }
+    while(option=='y'||option=='Y');
+
+    //The section inserts the elements into the nodes of the second 
+list
+    do
+    {
+      Node1 *newnode = new Node1();
+      cin>>newnode->data;
+      newnode->next=NULL;
+      newnode->prev=NULL;
+      if(headNode1==NULL)
+      {
+        headNode1=tailNode1=newnode;
+      }
+      else
+      {
+        Node1 *curr = headNode1;
+        while(curr->next!=NULL)
+         {
+           curr=curr->next;
+         }
+         curr->next= tailNode1=newnode;
+         newnode->prev=curr;
+       }
+       cout<<"Enter y to continue adding data into the second list :";
+       cin>>option;
+    }
+    while(option=='y'||option=='Y');
+}
+void DoublyLinkedList::Merge()
+{
+   Node *currentNode=headNode;
+   Node1 *currentNode1=headNode1;
+   //This section of code copies all the data from list 1 into the new
+list
+   while(currentNode!=NULL)
+   {
+     Node2 *newnode = new Node2();
+     newnode->data = currentNode->data;
+     newnode->next = NULL;
+     newnode->prev = NULL;
+     if(headNode2==NULL)
+     {
+       headNode2=tailNode2=newnode;
+     }
+     else
+     {
+       Node2 *temp = headNode2;
+       while(temp->next!=NULL)
+       {
+         temp=temp->next;
+       }
+       temp->next=tailNode2=newnode;
+       newnode->prev=temp;
+     }
+       currentNode=currentNode->next;
+    }
+
+    //This section of code appends the new list with data from the 
+second
+list
+    while(currentNode1!=NULL)
+    {
+     Node2 *newnode = new Node2();
+     newnode->data = currentNode1->data;
+     newnode->next = newnode->prev=NULL;
+     if(tailNode2->next==NULL)
+     {
+        tailNode2->next=newnode;
+        newnode->prev = tailNode2;
+        tailNode2=newnode;
+     }
+     currentNode1= currentNode1->next;
+  }
+}
+void DoublyLinkedList::Display()
+{
+    Node2 *currentNode2 = headNode2;
+    while(currentNode2!=NULL)
+    {
+       cout<<currentNode2->data<<" ";
+       currentNode2=currentNode2->next;
+    }
+    cout<<endl;
+}
+
+void main()
+{
+    DoublyLinkedList DLL;
+    DLL.Insert();
+    DLL.Merge();
+    DLL.Display();
+}

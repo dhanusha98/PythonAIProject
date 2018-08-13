@@ -1,0 +1,217 @@
+Code :
+
+	 #include<iostream.h>
+	 #include<conio.h>
+
+	 class cirdlink
+	 {
+		struct node
+		{
+		 int data;
+		 node *rnext;
+		 node *lnext;
+		}*new1,*head,*tail,*ptr,*temp;
+
+	   public:
+
+	   cirdlink()
+	   {
+		 head=tail=NULL;
+	   }
+
+	   void creation();
+	   void insertion();
+	   void deletion();
+	   void display();
+	 };
+
+	 void cirdlink :: creation()
+	 {
+		if(head==NULL)
+		{
+		   new1=new node[sizeof(node)];
+		   new1->rnext=NULL;
+		   new1->lnext=NULL;
+		   cout<<"enter student number  :";
+		   cin>>new1->data;
+		   head=new1;
+		   tail=new1;
+		   head->rnext=tail;
+		   head->lnext=tail;
+		   tail->rnext=head;
+		   tail->lnext=head;
+		 }
+		 else
+		 cout<<" creation done only once  !";
+	   }
+
+	   void cirdlink :: insertion()
+	   {
+		 int i,pos;
+		 new1=new node[sizeof(node)];
+		 new1->rnext=NULL;
+		 new1->lnext=NULL;
+		 cout<<"enter student number :";
+		 cin>>new1->data;
+		 cout<<"enter position you want to insert  :";
+		 cin>>pos;
+		 if(pos==1)
+		 {
+		   new1->rnext=head;
+		   head=new1;
+		   tail->lnext=head;
+		   tail->rnext=head;
+		   head->lnext=tail;
+		 }
+		 else
+		 {
+		   i=1;
+		   temp=head;
+		   while(i < pos-1 && temp->rnext!=tail)
+		   {
+			   i++;
+			   temp=temp->rnext;
+		   }
+		   if(temp->rnext==tail)
+		   {
+				 new1->rnext=tail->rnext;
+				 tail->rnext=new1;
+				 new1->lnext=tail;
+				 tail=new1;
+				 head->lnext=tail;
+		   }
+		   else
+		   {
+				 new1->rnext=temp->rnext;
+				 new1->lnext=temp;
+				 temp->rnext=new1;
+				 new1->rnext->lnext=new1;
+		   }
+		 }
+	   }
+	   void  cirdlink :: deletion()
+	   {
+			int pos,i;
+
+			cout<<"Enter Position you want to Delete ?";
+			cin>>pos;
+
+			if(pos==1 && head!=tail)
+			{
+				ptr=head;
+				head=head->rnext;
+				head->lnext=tail;
+				tail->rnext=head;
+				delete ptr;
+			}
+			else
+			{
+				i=1;
+				temp=head;
+				while(i < pos-1 && temp->rnext!=tail)
+				{
+				   i++;
+				   temp=temp->rnext;
+				}
+				if(temp->rnext!=tail)
+				{
+					 ptr=temp->rnext;
+					 temp->rnext=ptr->rnext;
+					 ptr->rnext->lnext=ptr->lnext;
+					 delete ptr;
+				}
+				else
+				{
+				   if(temp->rnext==tail && head!=tail)
+				   {
+						 ptr=tail;
+						 tail=temp;
+						 tail->rnext=head;
+						 head->lnext=tail;
+						 delete ptr;
+					}
+					else
+					{
+					   head=NULL;
+					   tail=NULL;
+					   delete head;
+					   delete tail;
+				   }
+				}
+			   }
+			}
+		  void cirdlink::display()
+		  {
+			   int ch;
+			   cout<<"1.forward
+2.backward
+:";
+			   cout<<"Enter your choice<1/2>?";
+			   cin>>ch;
+			  switch(ch)
+			  {
+				  case 1:  if(head!=NULL)
+						   {
+							 temp=head;
+							 while(temp!=tail)
+							 {
+							  cout<<temp->data<<"    ";
+							  temp=temp->rnext;
+							 }
+							 if(temp==tail)
+							   cout<<temp->data;
+							 }
+							 break;
+
+				  case 2 :  if(tail!=NULL)
+							{
+							  temp=tail;
+							  while(temp!=head)
+							  {
+								cout<<temp->data<<"    ";
+								temp=temp->lnext;
+							   }
+							   if(temp==head)
+								  cout<<temp->data;
+							 }
+							 break;
+			  }
+		  }
+
+		  void main()
+		  {
+			 cirdlink c1;
+
+			 int ch;
+			 char op;
+			 do
+			 {
+				clrscr();
+				cout<<"----------Menu------------
+";
+				cout<<"1.Creation
+2.Insertion
+3.Deletion
+4.Display
+";
+				cout<<"Enter Your choice <1..4> ?";
+				cin>>ch;
+				switch(ch)
+				{
+					 case 1 :   c1.creation();
+								break;
+					 case 2 :   c1.insertion();
+								break;
+					 case 3 :	c1.deletion();
+								break;
+					 case 4 :	c1.display();
+								break;
+				}
+				cout<<"Do you want to continue <Y/N> ?";
+				cin>>op;
+			 }while(op=='y' || op=='Y');
+			getch();
+		  }
+
+
+

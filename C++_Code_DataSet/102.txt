@@ -1,0 +1,62 @@
+Code :
+#include<iostream.h>
+#include<string.h>
+#include<conio.h>
+//using namespace std;
+
+
+int l1,l2;
+char arr1[40],arr2[40],ans[40];
+
+class large
+{
+
+public:
+
+void length()
+{
+l1=strlen(arr1);
+l2=strlen(arr2);
+
+cout<<"
+the length of the first digit is:"<<l1;
+cout<<"
+the length of the second string is:"<<l2;
+
+}
+
+void sub2()
+{
+int s=0;int f=l1-l2;
+int i=l1-1;
+int j=l2-1;
+int li=i;
+if(i==j)
+{
+	while(i>=0)
+	{
+	if(i>0)
+	{
+	s=arr1[i]-arr2[j];
+		if(s<0)
+		{
+		s=((arr1[i]-48)+10)-(arr2[j]-48);
+		arr1[i-1]=((arr1[i-1]-48)-1)+48;
+		}
+		else
+		{
+		s=(arr1[i]-48)-(arr2[j]-48);
+		}
+	ans[i]=s+48;
+	i--;
+	j--;
+	}
+	else
+	{
+	s=(arr1[i]-48)-(arr2[j]-48);
+	ans[i]=s+48;
+	i--;
+	j--;
+	}
+	}
+ans[li+1]='

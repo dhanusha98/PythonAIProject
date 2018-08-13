@@ -1,0 +1,117 @@
+#include<iostream.h>
+#include<dos.h>
+#include<conio.h>
+#include<dos.h>
+#include<graphics.h>
+#include<stdlib.h>
+#include<stdio.h>
+#include<string.h>
+void*image1;
+void*image;
+float a[51],bp[40],cp[40],dp[40];
+int
+key,car=5,var,next,esc,taken,chum,remark,bli=3,k,number,q,marksum,mon,kal=
+0,jai[3],sub,symb,dont,chance=2,repe=0,repeat=0;
+int shuf,player=1,guess,remain=0,count=0,mark[3];
+float play[3],greatest,great=232,small,remai,in1[3],in2[3],in3[3];
+char wini[4][35]={" You have done it man. Well done"," You are cool 
+man","
+a wonderful game"," you are the best"};
+char losi[4][35]={" You should improve your play"," Show me a better 
+game
+next time"," I didn't feel any competition"," Better luck next time"};
+char uttar='n';
+char egg,help[39],place[3][10]={"player","cpu2","cpu1"};
+
+int get_scancode()
+{
+       union REGS inregs, outregs ;
+
+       while( !kbhit( ) )
+	       ;
+
+       inregs.h.ah = 0 ;
+       int86(22, &inregs, &outregs) ;
+       return ( outregs.h.ah ) ;
+}
+
+void drawbox(char z[120])
+{
+ setcolor(15);
+ setviewport(0,0,639,75,1);
+ clearviewport();
+ setviewport(0,0,639,479,1);
+ rectangle(0,0,639,75);
+ outtextxy(10,10,"message box:-");
+ outtextxy(30,25,z);
+}
+
+class board
+{
+ int bk,x1,y1,x2,y2;
+
+ public:
+
+ board(void)
+ {
+  x1=0;
+  y1=76;
+  x2=639;
+  y2=376;
+ }
+
+ void draw(void)
+ {
+  setcolor(15);
+  setbkcolor(BLACK);
+  rectangle(0,377,639,479);
+  rectangle(260,455,314,475);
+  rectangle(324,455,378,475);
+  setfillstyle(1,GREEN);
+  floodfill(2,379,15);
+  outtextxy(270,463,"PLAY");
+  outtextxy(334,463,"TAKE");
+  outtextxy(10,387,"Your Hand -");
+  rectangle(0,76,639,376);
+  rectangle(0,150,20,250);
+  rectangle(615,150,639,250);
+  rectangle(269,376,369,359);
+  settextstyle(0,1,2);
+  outtextxy(20,160,"CPU 1");
+  outtextxy(639,160,"CPU 2");
+  settextstyle(0,0,1);
+  outtextxy(290,365,"YOURSELF");
+  settextstyle(0,0,0);
+  setfillstyle(1,BLUE);
+  floodfill(300,300,15);
+ }
+
+ void play1(float,int);
+
+}plai;
+
+void board::play1(float ax,int cx)
+{
+ int x,y,no;
+ switch(cx)
+ {
+  case 1:{
+	  x=71;
+	  y=210;
+	  no=210;
+	 }break;
+  case 2:{
+	  x=310;
+	  y=307;
+	  no=50;
+	 }break;
+  case 3:{
+	  x=560;
+	  y=190;
+	  no=230;
+	 }break;
+ }
+ int sym=int((ax*10 -int(ax)*10)+0.1);
+ char symb[2];
+ symb[0]=char(sym);
+ symb[1]='
