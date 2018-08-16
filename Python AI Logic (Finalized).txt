@@ -1,0 +1,68 @@
+inputFile = open("newFileTxt.txt","r")
+
+policy01="FILE"
+policy02="getenv()"
+inputContent="" #INPUT CONTENT FOR NEURAL NETWORK
+output="" #TARGET OUTPUT FOR FILE IN ORDER TO TRAIN NEURAL NETWORK
+
+multiLineCommentStart ="/*"
+commentEnd = "*/"
+
+contentlist=[]
+lineIndex=-1#LINE NUMBER OF CONTENT LIST
+
+vulnerabilityMatchingList=[]
+
+for line in inputFile:
+    line=line.strip()
+    contentlist.append(line)
+
+
+#ACTUAL LOGIC STARTS
+
+for linevalue in contentlist:
+    lineIndex +=1
+
+    if linevalue.startswith("//"):
+        continue
+    elif linevalue.startswith("/*"):
+         if commentEnd in linevalue:
+            cEndIndex = linevalue.find("*/")
+            if linevalue[cEndIndex + 1] == "/":
+                 cEndIndex += 1
+                 linevalue = linevalue[cEndIndex:]
+
+                 if policy01 or policy02 in linevalue:
+                    if lineIndex == 1 or lineIndex == len(contentlist) - 1:
+                        inputContent=linevalue
+                        vulnerabilityMatchingList.append(inputContent)
+                    else:
+                        startIndex = lineIndex - 1
+                        endIndex = lineIndex + 2 #NOTE THAT '2' INCLUDED HERE AS 'endIndex' DO NOT PRINT BY TRAVERSAL
+                        inputContent=contentlist[startIndex:endIndex]
+                        vulnerabilityMatchingList.append(inputContent)
+         else:
+               continue
+
+    elif policy01 or policy02 in linevalue:
+        if lineIndex == 1 or lineIndex == len(contentlist) - 1:
+            inputContent=linevalue
+            vulnerabilityMatchingList.append(inputContent)
+        else:
+            startIndex = lineIndex - 1
+            endIndex = lineIndex + 2 #NOTE THAT '2' INCLUDED HERE AS 'endIndex' DO NOT PRINT BY TRAVERSAL
+            inputContent = contentlist[startIndex:endIndex]
+            vulnerabilityMatchingList.append(inputContent)
+
+
+
+if len(vulnerabilityMatchingList) == 0:
+    output=0 #0 HAS PROVIDED DUE TO UNAVAILABILITY OF MATCHING POLICY FOR STACK OVERFLOW VULNERABILITY
+    print("OUTPUT CATEGORY: "+str(output))
+else:
+    output=1 #1 HAS PROVIDED DUE TO AVAILABILITY OF MATCHING POLICY FOR STACK OVERFLOW VULNERABILITY
+    print("MATCHING VULNERABILITIES: \n")
+    for i in vulnerabilityMatchingList:
+        print(i)
+
+    print("OUTPUT CATEGORY: "+str(output))
