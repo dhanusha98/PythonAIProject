@@ -28,5 +28,18 @@ for index in range(len(contentlist)):
               matchedCodePart = contentlist[index]
               matchfoundList.append(matchedCodePart)
 
-for indexvalue in matchfoundList:
-    print(indexvalue)
+output=0 # OUTPUT CATEGORY OF FILE
+if len(matchfoundList) ==0:
+    output=0
+else:
+    output=1
+
+if output == 0:
+    print("OUTPUT CATEGORY: "+str(output))
+    print("NO STACK OVERFLOW VULNERABILITY FOUND")
+else:
+    print("OUTPUT CATEGORY: " + str(output))
+    print("-------------MATCHING SOURCE CODE----------------")
+    for indexvalue in matchfoundList:
+        print(indexvalue)
+
